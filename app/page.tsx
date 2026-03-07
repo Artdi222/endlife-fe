@@ -78,27 +78,6 @@ export default function Home() {
                 End<span className="text-yellow-300">Life</span>
               </div>
             </motion.div>
-
-            <div className="flex items-center gap-3">
-              {["Sign In", "Sign Up"].map((label, i) => (
-                <motion.div
-                  key={label}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.6 + i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <Link href={i === 0 ? "/login" : "/register"}>
-                    <motion.button
-                      whileHover={{ scale: 1.05, backgroundColor: "#fde047" }}
-                      whileTap={{ scale: 0.97 }}
-                      className="bg-yellow-300 text-zinc-900 rounded-md font-semibold px-5 py-2 text-sm cursor-pointer transition-colors"
-                    >
-                      {label}
-                    </motion.button>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
           </div>
         </div>
       </motion.nav>

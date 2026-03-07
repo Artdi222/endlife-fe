@@ -5,26 +5,42 @@ import { authApi } from "@/lib/api/index";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     setError("");
+
+    if (!username || username.length < 3) {
+      setError("Username must be at least 3 characters.");
+      return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (!password || password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const res = await authApi.login({ email, password });
+      const res = await authApi.register({ username, email, password });
       localStorage.setItem("admin_token", res.data.token);
-      if (res.data.user.role === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/user");
-      }
+      router.push("/login");
     } catch (e: Error | unknown) {
-      setError(e instanceof Error ? e.message : "Invalid credentials");
+      setError(e instanceof Error ? e.message : "Failed to create account.");
     } finally {
       setLoading(false);
     }
@@ -46,13 +62,29 @@ export default function LoginPage() {
               </div>
             </div>
             <h1 className="text-3xl font-extrabold text-zinc-900 tracking-tight mb-2">
-              Welcome back
+              Create account
             </h1>
-            <p className="text-zinc-500 text-sm">Sign in to continue.</p>
+            <p className="text-zinc-500 text-sm">Sign up to get started.</p>
           </div>
 
           {/* Form */}
           <div className="flex flex-col gap-5">
+            {/* Username */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-mono uppercase tracking-widest text-zinc-400">
+                Username
+              </label>
+              <input
+                type="text"
+                placeholder="johndoe"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleRegister()}
+                className="bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-300/20 transition-all"
+              />
+            </div>
+
+            {/* Email */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-mono uppercase tracking-widest text-zinc-400">
                 Email
@@ -62,11 +94,12 @@ export default function LoginPage() {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                onKeyDown={(e) => e.key === "Enter" && handleRegister()}
                 className="bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-300/20 transition-all"
               />
             </div>
 
+            {/* Password */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-mono uppercase tracking-widest text-zinc-400">
                 Password
@@ -76,11 +109,27 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                onKeyDown={(e) => e.key === "Enter" && handleRegister()}
                 className="bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-300/20 transition-all"
               />
             </div>
 
+            {/* Confirm Password */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-mono uppercase tracking-widest text-zinc-400">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleRegister()}
+                className="bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-300/20 transition-all"
+              />
+            </div>
+
+            {/* Error */}
             {error && (
               <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                 <span className="text-red-400 text-xs">✕</span>
@@ -88,24 +137,25 @@ export default function LoginPage() {
               </div>
             )}
 
+            {/* Submit */}
             <button
-              onClick={handleLogin}
+              onClick={handleRegister}
               disabled={loading}
               className="bg-yellow-300 text-zinc-900 font-bold text-sm py-3 rounded-xl hover:bg-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all mt-2 shadow-sm"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Creating account..." : "Create Account"}
             </button>
           </div>
 
           <p className="text-zinc-500 text-sm mt-5">
-              Sign up to get started.{" "}
-              <a
-                href="/register"
-                className="text-yellow-500 hover:text-yellow-600 font-medium transition-colors"
-              >
-                dont have an account?
-              </a>
-            </p>
+            Already have an account?{" "}
+            <a
+              href="/login"
+              className="text-yellow-500 hover:text-yellow-600 font-medium transition-colors"
+            >
+              Sign in
+            </a>
+          </p>
 
           <p className="text-zinc-300 text-xs font-mono mt-10 text-center">
             © ENDLIFE

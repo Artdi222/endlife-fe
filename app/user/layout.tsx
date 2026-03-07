@@ -1,9 +1,9 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/components/admin/Sidebar-admin";
+import Sidebar from "@/components/user/Sidebar-user";
 
-export default function AdminLayout({
+export default function UserLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -11,13 +11,13 @@ export default function AdminLayout({
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("admin_token");
+    const token = localStorage.getItem("user_token");
     if (!token) router.push("/login");
   }, []);
 
   return (
     <div className="flex min-h-screen bg-zinc-950 text-white">
-      <Sidebar />
+      
       <main className="ml-56 flex-1 p-10">{children}</main>
     </div>
   );

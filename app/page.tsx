@@ -193,23 +193,6 @@ export default function Home() {
                 </motion.button>
               </Link>
             </motion.div>
-
-            {/* Stats row */}
-            <motion.div
-              variants={itemVariants}
-              className="mt-14 flex items-center gap-8 border-t border-white/10 pt-8"
-            >
-              {[
-                { value: "Daily", label: "Mission Tracking" },
-                { value: "Free", label: "Always" },
-                { value: "Fast", label: "& Lightweight" },
-              ].map((stat) => (
-                <div key={stat.label} className="flex flex-col gap-0.5">
-                  <span className="text-yellow-300 font-black text-xl">{stat.value}</span>
-                  <span className="text-zinc-400 text-xs uppercase tracking-wider">{stat.label}</span>
-                </div>
-              ))}
-            </motion.div>
           </motion.div>
         </motion.div>
 

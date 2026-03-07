@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/components/admin/Sidebar";
+import Sidebar from "@/components/dashboard/Sidebar";
 
-export default function AdminLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -13,25 +13,17 @@ export default function AdminLayout({
 
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
-    const role = localStorage.getItem("admin_role");
-
-    if (!token || role !== "admin") {
-      if (role === "user") {
-        router.push("/dashboard");
-        return;
-      }
-
+    if (!token) {
       router.push("/login");
       return;
     }
-
     setAuthorized(true);
   }, []);
 
   if (!authorized) return null;
 
   return (
-    <div className="flex min-h-screen bg-zinc-950 text-white">
+    <div className="flex min-h-screen bg-zinc-50 text-zinc-900">
       <Sidebar />
       <main className="ml-56 flex-1 p-10">{children}</main>
     </div>

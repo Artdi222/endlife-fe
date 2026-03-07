@@ -17,10 +17,13 @@ export default function LoginPage() {
     try {
       const res = await authApi.login({ email, password });
       localStorage.setItem("admin_token", res.data.token);
+      localStorage.setItem("admin_role", res.data.user.role);
       if (res.data.user.role === "admin") {
         router.push("/admin");
-      } else {
+      } else if (res.data.user.role === "user") {
         router.push("/dashboard");
+      } else {
+        setError("Access Denied. Admin Only");
       }
     } catch (e: Error | unknown) {
       setError(e instanceof Error ? e.message : "Invalid credentials");

@@ -59,6 +59,7 @@ function HexGrid() {
         >
           <HexPath size={h.size} />
           <polygon
+            suppressHydrationWarning
             points={Array.from({ length: 6 }, (_, j) => {
               const r = h.size / 2;
               const angle = (Math.PI / 180) * (60 * j - 30);
@@ -175,6 +176,7 @@ function CenterOrbit() {
           return (
             <polygon
               key={i}
+              suppressHydrationWarning
               points={Array.from({ length: 6 }, (_, j) => {
                 const a = (Math.PI / 180) * (60 * j - 30);
                 return `${cx + 12 * Math.cos(a)},${cy + 12 * Math.sin(a)}`;

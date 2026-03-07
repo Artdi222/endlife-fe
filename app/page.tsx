@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, Variants } from "framer-motion";
 import { useRef } from "react";
 
 export default function Home() {
@@ -15,7 +15,7 @@ export default function Home() {
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-  const navVariants = {
+  const navVariants: Variants  = {
     hidden: { y: -80, opacity: 0 },
     visible: {
       y: 0,
@@ -24,14 +24,14 @@ export default function Home() {
     },
   };
 
-  const containerVariants = {
+  const containerVariants: Variants  = {
     hidden: {},
     visible: {
       transition: { staggerChildren: 0.15, delayChildren: 0.3 },
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 40, filter: "blur(8px)" },
     visible: {
       opacity: 1,
@@ -41,7 +41,7 @@ export default function Home() {
     },
   };
 
-  const badgeVariants = {
+  const badgeVariants: Variants = {
     hidden: { opacity: 0, scale: 0.8, x: -20 },
     visible: {
       opacity: 1,
@@ -106,7 +106,7 @@ export default function Home() {
       {/* HERO */}
       <section
         ref={heroRef}
-        className="relative h-screen min-h-[600px] overflow-hidden flex items-center"
+        className="relative h-screen min-h-150 overflow-hidden flex items-center"
       >
         {/* Parallax background */}
         <motion.div
@@ -119,8 +119,8 @@ export default function Home() {
         />
 
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/65 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/95 via-black/65 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-zinc-950/80 via-transparent to-transparent" />
 
         {/* Animated scanline effect */}
         <motion.div
@@ -243,7 +243,7 @@ export default function Home() {
         >
           <span className="text-zinc-500 text-xs uppercase tracking-widest">Scroll</span>
           <motion.div
-            className="w-px h-10 bg-gradient-to-b from-zinc-500 to-transparent"
+            className="w-px h-10 bg-linear-to-b from-zinc-500 to-transparent"
             animate={{ scaleY: [1, 0.4, 1], originY: 0 }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
           />

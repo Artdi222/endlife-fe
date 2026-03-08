@@ -73,20 +73,6 @@ function LoadingScreen({ onFinish }: { onFinish: () => void }) {
             </motion.span>
           ))}
         </div>
-        <div className="flex gap-3 -mt-1 ml-6">
-          {[3, 4].map((i) => (
-            <motion.span
-              key={i}
-              custom={i}
-              variants={hexVariants}
-              initial="hidden"
-              animate="visible"
-              className="text-yellow-300/40 text-4xl"
-            >
-              ⬡
-            </motion.span>
-          ))}
-        </div>
       </div>
 
       {/* Logo */}
@@ -141,22 +127,6 @@ function LoadingScreen({ onFinish }: { onFinish: () => void }) {
           </span>
         </div>
       </motion.div>
-
-      {/* Done */}
-      <AnimatePresence>
-        {phase === "done" && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="text-yellow-300 text-xl font-bold flex items-center gap-2"
-          >
-            <motion.span animate={{ rotate: [0, 360] }} transition={{ duration: 0.5 }}>
-              ✓
-            </motion.span>
-            Ready
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }
@@ -166,29 +136,11 @@ function Particles() {
   const particles = Array.from({ length: 12 }, (_, i) => i);
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particles.map((i) => (
-        <motion.div
-          key={i}
+        <div
           className="absolute text-yellow-300/20 text-lg select-none"
-          style={{
-            left: `${10 + (i * 7.5) % 85}%`,
-            top: `${15 + (i * 13) % 70}%`,
-          }}
-          animate={{
-            y: [0, -20, 0],
-            opacity: [0.1, 0.4, 0.1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 4 + (i % 4),
-            repeat: Infinity,
-            delay: i * 0.4,
-            ease: "easeInOut",
-          }}
         >
           ⬡
-        </motion.div>
-      ))}
+        </div>
     </div>
   );
 }
@@ -262,22 +214,18 @@ export default function Home() {
         >
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <div className="flex justify-between items-center h-20">
-              <motion.div
+              <div
                 className="flex items-center gap-3"
-                whileHover={{ scale: 1.04 }}
-                transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
-                <motion.span
+                <span
                   className="text-4xl text-yellow-300 leading-none"
-                  animate={{ rotate: [0, 15, -15, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                 >
                   ⬡
-                </motion.span>
+                </span>
                 <div className="text-xl font-extrabold text-white tracking-tight">
                   End<span className="text-yellow-300">Life</span>
                 </div>
-              </motion.div>
+              </div>
 
               {/* <div className="flex items-center gap-3">
                 {[

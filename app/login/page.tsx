@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api/index";
 import Image from "next/image";
-import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,7 +20,7 @@ export default function LoginPage() {
       if (res.data.user.role === "admin") {
         router.push("/admin");
       } else {
-        router.push("/user");
+        router.push("/dashboard");
       }
     } catch (e: Error | unknown) {
       setError(e instanceof Error ? e.message : "Invalid credentials");
@@ -38,9 +37,7 @@ export default function LoginPage() {
           {/* Brand */}
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-6">
-              <Link href={"/"}>
-                <span className="text-4xl text-yellow-300">⬡</span>
-              </Link>
+              <span className="text-4xl text-yellow-300">⬡</span>
               <div className="text-xl font-extrabold text-zinc-900 tracking-tight">
                 EndLife
               </div>
@@ -96,16 +93,6 @@ export default function LoginPage() {
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </div>
-
-          <p className="text-zinc-500 text-sm mt-5">
-              Sign up to get started.{" "}
-              <a
-                href="/register"
-                className="text-yellow-500 hover:text-yellow-600 font-medium transition-colors"
-              >
-                dont have an account?
-              </a>
-            </p>
 
           <p className="text-zinc-300 text-xs font-mono mt-10 text-center">
             © ENDLIFE

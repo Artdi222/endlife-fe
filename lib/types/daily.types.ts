@@ -27,6 +27,8 @@ export interface GlobalCategoryProgress {
   category_id: number;
   category_name: string;
   is_completed: boolean;
+  total_tasks: number;
+  completed_tasks: number;
 }
 
 export interface GlobalProgressResult {
@@ -36,22 +38,14 @@ export interface GlobalProgressResult {
   detail: GlobalCategoryProgress[];
 }
 
-export interface SanityTracker {
-  id: number;
-  user_id: number;
+export interface SanityResult {
   current_sanity: number;
   max_sanity: number;
-  last_update: string;
+  full_in_seconds: number;
 }
 
 export interface UpdateSanityDTO {
   user_id: number;
   current_sanity: number;
   max_sanity: number;
-}
-
-export interface SanityResult {
-  current_sanity: number;
-  max_sanity: number;
-  full_in_seconds: number;
 }

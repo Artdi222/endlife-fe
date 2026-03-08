@@ -49,23 +49,23 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom */}
-      {/* Logout */}
-      <div className="p-3 border-t border-zinc-800">
-        <button
-          onClick={() => {
-            localStorage.removeItem("admin_role");
-            router.push("/login");
-          }}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-zinc-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
-        >
-          <span>⏻</span> Logout
-        </button>
+      <div className="p-3 border-t border-zinc-800 flex flex-col">
+          <button
+            onClick={() => {
+              localStorage.removeItem("admin_role");
+              localStorage.removeItem("admin_token");
+              router.replace("/login");
+            }}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-zinc-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
+          >
+            <span>⏻</span> Logout
+          </button>
+          <div className="pt-2">
+            <p className="text-[10px] font-mono text-zinc-300 uppercase tracking-widest flex">
+              © EndLife
+            </p>
+          </div>
       </div>
-      {/* <div className="px-6 py-5 border-t border-yellow-100">
-        <p className="text-[10px] font-mono text-zinc-300 uppercase tracking-widest">
-          © EndLife
-        </p>
-      </div> */}
     </aside>
   );
 }

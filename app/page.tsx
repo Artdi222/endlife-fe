@@ -305,7 +305,6 @@ export default function Home() {
               <motion.div variants={fadeLeft} className="mb-6 inline-flex">
                 <motion.span
                   className="inline-flex items-center gap-2 bg-yellow-300/10 border border-yellow-300/30 text-yellow-300 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full backdrop-blur-sm"
-                  whileHover={{ scale: 1.05, backgroundColor: "rgba(253,224,71,0.15)" }}
                 >
                   <motion.span
                     className="w-1.5 h-1.5 rounded-full bg-yellow-300"

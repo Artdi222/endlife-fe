@@ -35,16 +35,11 @@ export default function TaskItem({
   const isCheckbox = maxProgress === 1;
   const isCompleted = progress >= maxProgress;
 
-  // Lock from checking if activity is full and this is an activity task
-  // Allow unchecking always
   const isCheckLocked = isActivityTask && activityLocked && !isCompleted;
-  const isIncrementLocked =
-    isActivityTask && activityLocked && progress >= maxProgress;
+  const isIncrementLocked = isActivityTask && activityLocked && progress >= maxProgress;
 
   const updateProgress = async (newProgress: number) => {
     const clamped = Math.max(0, Math.min(newProgress, maxProgress));
-
-    // Optimistic update
     setLoading(true);
     const prev = progress;
     setProgress(clamped);
@@ -58,14 +53,14 @@ export default function TaskItem({
       });
       onProgressChange?.(taskId, clamped);
     } catch (e: unknown) {
-      // Revert on 403 (blocked) or any error
+      console.error(e);
       setProgress(prev);
     } finally {
       setLoading(false);
     }
   };
 
-  // ── Checkbox task ────────────────────────────────────────────────────────────
+  // Checkbox task
   if (isCheckbox) {
     return (
       <motion.div
@@ -122,7 +117,7 @@ export default function TaskItem({
         <div className="flex items-center gap-2 shrink-0">
           {isCheckLocked && <Lock size={11} className="text-zinc-300" />}
           {rewardPoint > 0 && (
-            <span className="text-xs font-mono text-zinc-400">
+            <span className="text-sm font-mono text-zinc-400">
               +{rewardPoint}
             </span>
           )}
@@ -131,7 +126,7 @@ export default function TaskItem({
     );
   }
 
-  // ── Multi-progress task ──────────────────────────────────────────────────────
+  // Multi-progress task
   return (
     <motion.div
       layout
@@ -163,7 +158,7 @@ export default function TaskItem({
           >
             <Minus size={11} />
           </button>
-          <span className="text-xs font-bold text-zinc-700 min-w-10 text-center">
+          <span className="text-sm font-bold text-zinc-700 min-w-12 text-center">
             {progress}/{maxProgress}
           </span>
           <button

@@ -1,9 +1,43 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api/index";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, Variants, AnimatePresence } from "framer-motion";
+
+/* ── Floating hex particles ── */
+function HexParticles() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(10)].map((_, i) => (
+        <motion.span
+          key={i}
+          className="absolute text-yellow-300/30 select-none"
+          style={{
+            fontSize: `${20 + (i % 4) * 14}px`,
+            left: `${8 + (i * 9) % 80}%`,
+            top: `${10 + (i * 11) % 75}%`,
+          }}
+          animate={{
+            y: [0, -16, 0],
+            rotate: [0, 180, 360],
+            opacity: [0.15, 0.45, 0.15],
+          }}
+          transition={{
+            duration: 4 + (i % 3),
+            repeat: Infinity,
+            delay: i * 0.35,
+            ease: "easeInOut",
+          }}
+        >
+          ⬡
+        </motion.span>
+      ))}
+    </div>
+  );
+}
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -13,10 +47,10 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [focused, setFocused] = useState<string | null>(null);
 
   const handleRegister = async () => {
     setError("");
-
     if (!username || username.length < 3) {
       setError("Username must be at least 3 characters.");
       return;
@@ -33,7 +67,6 @@ export default function RegisterPage() {
       setError("Passwords do not match.");
       return;
     }
-
     setLoading(true);
     try {
       const res = await authApi.register({ username, email, password });
@@ -46,133 +79,282 @@ export default function RegisterPage() {
     }
   };
 
+  const containerVariants: Variants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } },
+  };
+
+  const fadeUp: Variants = {
+    hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+    },
+  };
+
+  const slideLeft: Variants = {
+    hidden: { opacity: 0, x: -40 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } },
+  };
+
+  const slideRight: Variants = {
+    hidden: { opacity: 0, x: 40 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } },
+  };
+
+  const fields = [
+    { id: "username", label: "Username", type: "text", placeholder: "johndoe", value: username, onChange: setUsername },
+    { id: "email", label: "Email", type: "email", placeholder: "you@example.com", value: email, onChange: setEmail },
+    { id: "password", label: "Password", type: "password", placeholder: "••••••••", value: password, onChange: setPassword },
+    { id: "confirm", label: "Confirm Password", type: "password", placeholder: "••••••••", value: confirmPassword, onChange: setConfirmPassword },
+  ];
+
   return (
-    <div className="min-h-screen flex bg-white">
-      {/* Left — Form */}
-      <div className="flex-1 flex flex-col justify-center px-12 lg:px-20 xl:px-28 bg-white">
-        <div className="max-w-sm w-full mx-auto">
+    <div className="min-h-screen flex bg-white overflow-hidden">
+
+      {/* ── LEFT — Form Panel (white) ── */}
+      <motion.div
+        variants={slideLeft}
+        initial="hidden"
+        animate="visible"
+        className="flex-1 flex flex-col justify-center px-10 lg:px-16 xl:px-24 relative bg-white"
+      >
+        {/* Subtle yellow glow top-left */}
+        <motion.div
+          className="absolute -top-40 -left-40 w-96 h-96 bg-yellow-300/20 rounded-full blur-3xl pointer-events-none"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.9, 0.5] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        />
+        {/* Bottom-right yellow accent */}
+        <motion.div
+          className="absolute -bottom-20 -right-20 w-64 h-64 bg-yellow-200/30 rounded-full blur-3xl pointer-events-none"
+          animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        />
+
+        <div className="max-w-md w-full mx-auto relative z-10">
+
           {/* Brand */}
-          <div className="mb-10">
-            <div className="flex items-center gap-3 mb-6">
-              <Link href={"/"}>
-                <span className="text-4xl text-yellow-300">⬡</span>
+          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="mb-10">
+            <motion.div variants={fadeUp} className="flex items-center gap-3 mb-8">
+              <Link href="/">
+                <motion.span
+                  className="text-4xl text-yellow-400 leading-none cursor-pointer"
+                  whileHover={{ scale: 1.15, rotate: 15 }}
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  ⬡
+                </motion.span>
               </Link>
               <div className="text-xl font-extrabold text-zinc-900 tracking-tight">
-                EndLife
+                End<span className="text-yellow-500">Life</span>
               </div>
-            </div>
-            <h1 className="text-3xl font-extrabold text-zinc-900 tracking-tight mb-2">
-              Create account
-            </h1>
-            <p className="text-zinc-500 text-sm">Sign up to get started.</p>
-          </div>
+            </motion.div>
 
-          {/* Form */}
-          <div className="flex flex-col gap-5">
-            {/* Username */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-mono uppercase tracking-widest text-zinc-400">
-                Username
-              </label>
-              <input
-                type="text"
-                placeholder="johndoe"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleRegister()}
-                className="bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-300/20 transition-all"
-              />
-            </div>
+            <motion.h1 variants={fadeUp} className="text-4xl font-black text-zinc-900 tracking-tight mb-2 leading-tight">
+              Create your<br />
+              <span className="text-yellow-400">account</span>
+            </motion.h1>
+            <motion.p variants={fadeUp} className="text-zinc-500 text-sm">
+              Join the operations. Already have one?{" "}
+              <Link href="/login" className="text-yellow-500 hover:text-yellow-600 font-semibold transition-colors">
+                Sign in
+              </Link>
+            </motion.p>
+          </motion.div>
 
-            {/* Email */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-mono uppercase tracking-widest text-zinc-400">
-                Email
-              </label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleRegister()}
-                className="bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-300/20 transition-all"
-              />
-            </div>
-
-            {/* Password */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-mono uppercase tracking-widest text-zinc-400">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleRegister()}
-                className="bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-300/20 transition-all"
-              />
-            </div>
-
-            {/* Confirm Password */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-mono uppercase tracking-widest text-zinc-400">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleRegister()}
-                className="bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-300/20 transition-all"
-              />
-            </div>
+          {/* Fields */}
+          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col gap-4">
+            {fields.map(({ id, label, type, placeholder, value, onChange }) => (
+              <motion.div key={id} variants={fadeUp} className="flex flex-col gap-1.5">
+                <label className="text-xs font-mono uppercase tracking-widest text-zinc-400">
+                  {label}
+                </label>
+                <motion.div
+                  animate={{
+                    boxShadow: focused === id
+                      ? "0 0 0 3px rgba(234,179,8,0.25)"
+                      : "0 0 0 0px rgba(234,179,8,0)",
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className="rounded-xl overflow-hidden"
+                >
+                  <input
+                    type={type}
+                    placeholder={placeholder}
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    onFocus={() => setFocused(id)}
+                    onBlur={() => setFocused(null)}
+                    onKeyDown={(e) => e.key === "Enter" && handleRegister()}
+                    className="w-full bg-zinc-50 border border-zinc-200 focus:border-yellow-400 rounded-xl px-4 py-3 text-sm text-zinc-900 placeholder-zinc-300 outline-none transition-colors"
+                  />
+                </motion.div>
+              </motion.div>
+            ))}
 
             {/* Error */}
-            {error && (
-              <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-                <span className="text-red-400 text-xs">✕</span>
-                <p className="text-red-500 text-sm">{error}</p>
-              </div>
-            )}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3"
+                >
+                  <span className="text-red-400 text-xs font-bold">✕</span>
+                  <p className="text-red-500 text-sm">{error}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Submit */}
-            <button
-              onClick={handleRegister}
-              disabled={loading}
-              className="bg-yellow-300 text-zinc-900 font-bold text-sm py-3 rounded-xl hover:bg-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all mt-2 shadow-sm"
-            >
-              {loading ? "Creating account..." : "Create Account"}
-            </button>
-          </div>
+            <motion.div variants={fadeUp}>
+              <motion.button
+                onClick={handleRegister}
+                disabled={loading}
+                whileTap={!loading ? { scale: 0.98 } : {}}
+                className="w-full bg-yellow-300 hover:bg-yellow-400 text-zinc-900 font-black text-sm py-3.5 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed transition-colors mt-1 relative overflow-hidden shadow-sm shadow-yellow-200 cursor-pointer"
+              >
+                <motion.span
+                  className="absolute inset-0 bg-white/30"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.45 }}
+                />
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                      className="inline-block"
+                    >
+                      ⬡
+                    </motion.span>
+                    Sign Up...
+                  </span>
+                ) : (
+                  "Sign Up"
+                )}
+              </motion.button>
+            </motion.div>
+          </motion.div>
 
-          <p className="text-zinc-500 text-sm mt-5">
-            Already have an account?{" "}
-            <a
-              href="/login"
-              className="text-yellow-500 hover:text-yellow-600 font-medium transition-colors"
-            >
-              Sign in
-            </a>
-          </p>
-
-          <p className="text-zinc-300 text-xs font-mono mt-10 text-center">
+          {/* Footer */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.6 }}
+            className="text-zinc-300 text-xs font-mono mt-10 text-center tracking-widest"
+          >
             © ENDLIFE
-          </p>
+          </motion.p>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Right — Image */}
-      <div className="hidden lg:block w-1/4 relative overflow-hidden">
+      {/* ── DIVIDER ── */}
+      <motion.div
+        initial={{ scaleY: 0, opacity: 0 }}
+        animate={{ scaleY: 1, opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="hidden lg:block w-px bg-linear-to-b from-transparent via-yellow-200 to-transparent my-16 origin-center"
+      />
+
+      {/* ── RIGHT — Yellow Panel ── */}
+      <motion.div
+        variants={slideRight}
+        initial="hidden"
+        animate="visible"
+        className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center"
+      >
+        {/* Image tinted over yellow */}
         <Image
-          height={720}
-          width={720}
-          src="/Login/Login.jpg"
-          alt="background"
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          src="/register/register.avif"
+          alt="Endfield background"
+          className="object-cover mix-blend-multiply"
         />
-      </div>
+
+        {/* Noise texture overlay for depth */}
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+          }}
+        />
+
+        {/* Gradient vignette */}
+        {/* <div className="absolute inset-0 bg-linear-to-br from-yellow-200/40 via-transparent to-yellow-500/30" />
+        <div className="absolute inset-0 bg-linear-to-t from-yellow-400/50 via-transparent to-transparent" /> */}
+        <div className="absolute inset-0 bg-linear-to-r from-black/95 via-black/65 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-zinc-950/80 via-transparent to-transparent" />
+
+        {/* Hex particles — zinc colored on yellow bg */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(10)].map((_, i) => (
+            <motion.span
+              key={i}
+              className="absolute text-yellow-300/75 select-none"
+              style={{
+                fontSize: `${20 + (i % 4) * 14}px`,
+                left: `${8 + (i * 9) % 80}%`,                
+                top: `${10 + (i * 11) % 75}%`,
+              }}
+              animate={{ rotate: 360, opacity: [0.1, 0.3, 0.1] }}
+              transition={{ 
+                duration: 20 + (i % 3), repeat: Infinity, delay: i * 0.35, ease: "linear" 
+              }}
+            >
+              ⬡
+            </motion.span>
+          ))}
+        </div>
+
+        {/* Center content */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="relative z-10 text-center px-12 max-w-sm"
+        >
+
+          <motion.h2
+            className="text-3xl font-black text-yellow-300 tracking-tight mb-3 leading-tight"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.7 }}
+          >
+            Daily Ops<br />
+            <span className="text-white drop-shadow-sm">Await You</span>
+          </motion.h2>
+
+          <motion.p
+            className="text-white text-sm leading-relaxed"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.7 }}
+          >
+            Track missions, manage progress, and stay on top of every daily operation in Arknights: Endfield.
+          </motion.p>
+
+        </motion.div>
+
+        {/* Bottom corner brand */}
+        <motion.div
+          className="absolute bottom-6 right-6 flex items-center gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.5 }}
+          transition={{ delay: 1.4 }}
+        >
+          <span className="text-yellow-300 text-lg">⬡</span>
+          <span className="text-yellow-300 text-xs font-black tracking-widest">ENDLIFE</span>
+        </motion.div>
+      </motion.div>
+
     </div>
   );
 }

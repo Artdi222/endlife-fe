@@ -11,7 +11,7 @@ export default function UserLayout({
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("user_token");
+    const token = localStorage.getItem("admin_token");
     if (!token) router.push("/login");
   }, []);
 

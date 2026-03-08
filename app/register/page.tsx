@@ -168,7 +168,7 @@ export default function RegisterPage() {
         <Image
           height={720}
           width={720}
-          src="/Login/Login.jpg"
+          src="/register/register.avif"
           alt="background"
           className="absolute inset-0 w-full h-full object-cover"
         />

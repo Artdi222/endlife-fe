@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { ArrowLeftCircle } from "lucide-react";
 
 interface NavItem {
   label: string;
@@ -158,11 +159,12 @@ export default function Sidebar() {
         <button
           onClick={() => {
             localStorage.removeItem("admin_token");
+            localStorage.removeItem("admin_role");
             router.push("/login");
           }}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-zinc-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
         >
-          <span>⏻</span> Logout
+          <ArrowLeftCircle size={17} strokeWidth={2.2} /> Logout
         </button>
       </div>
     </aside>

@@ -1,5 +1,5 @@
 import { request } from "./base";
-import type { LoginDTO, LoginResponse } from "../types";
+import type { LoginDTO, LoginResponse, RegisterDTO, RegisterResponse } from "../types";
 
 export const authApi = {
   login: (body: LoginDTO) =>
@@ -8,4 +8,10 @@ export const authApi = {
       { method: "POST", body: JSON.stringify(body) },
       false,
     ),
+    register: (body: RegisterDTO) =>
+      request<{data:RegisterResponse}>(
+        "/auth/register",
+        {method: "POST", body: JSON.stringify(body) },
+        false
+      )
 };

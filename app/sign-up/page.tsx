@@ -17,8 +17,8 @@ function HexParticles() {
           className="absolute text-yellow-300/30 select-none"
           style={{
             fontSize: `${20 + (i % 4) * 14}px`,
-            left: `${8 + (i * 9) % 80}%`,
-            top: `${10 + (i * 11) % 75}%`,
+            left: `${8 + ((i * 9) % 80)}%`,
+            top: `${10 + ((i * 11) % 75)}%`,
           }}
           animate={{
             y: [0, -16, 0],
@@ -39,7 +39,7 @@ function HexParticles() {
   );
 }
 
-export default function RegisterPage() {
+export default function SignUpPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -70,8 +70,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const res = await authApi.register({ username, email, password });
-      localStorage.setItem("admin_token", res.data.token);
-      router.push("/login");
+      router.push("/sign-in");
     } catch (e: Error | unknown) {
       setError(e instanceof Error ? e.message : "Failed to create account.");
     } finally {
@@ -96,24 +95,59 @@ export default function RegisterPage() {
 
   const slideLeft: Variants = {
     hidden: { opacity: 0, x: -40 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] },
+    },
   };
 
   const slideRight: Variants = {
     hidden: { opacity: 0, x: 40 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] },
+    },
   };
 
   const fields = [
-    { id: "username", label: "Username", type: "text", placeholder: "johndoe", value: username, onChange: setUsername },
-    { id: "email", label: "Email", type: "email", placeholder: "you@example.com", value: email, onChange: setEmail },
-    { id: "password", label: "Password", type: "password", placeholder: "••••••••", value: password, onChange: setPassword },
-    { id: "confirm", label: "Confirm Password", type: "password", placeholder: "••••••••", value: confirmPassword, onChange: setConfirmPassword },
+    {
+      id: "username",
+      label: "Username",
+      type: "text",
+      placeholder: "johndoe",
+      value: username,
+      onChange: setUsername,
+    },
+    {
+      id: "email",
+      label: "Email",
+      type: "email",
+      placeholder: "you@example.com",
+      value: email,
+      onChange: setEmail,
+    },
+    {
+      id: "password",
+      label: "Password",
+      type: "password",
+      placeholder: "••••••••",
+      value: password,
+      onChange: setPassword,
+    },
+    {
+      id: "confirm",
+      label: "Confirm Password",
+      type: "password",
+      placeholder: "••••••••",
+      value: confirmPassword,
+      onChange: setConfirmPassword,
+    },
   ];
 
   return (
     <div className="min-h-screen flex bg-white overflow-hidden">
-
       {/* ── LEFT — Form Panel (white) ── */}
       <motion.div
         variants={slideLeft}
@@ -131,20 +165,39 @@ export default function RegisterPage() {
         <motion.div
           className="absolute -bottom-20 -right-20 w-64 h-64 bg-yellow-200/30 rounded-full blur-3xl pointer-events-none"
           animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
         />
 
-        <div className="max-w-md w-full mx-auto relative z-10">
+        {/* ✅ HexParticles now rendered on the white form panel */}
+        <HexParticles />
 
+        <div className="max-w-md w-full mx-auto relative z-10">
           {/* Brand */}
-          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="mb-10">
-            <motion.div variants={fadeUp} className="flex items-center gap-3 mb-8">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="mb-10"
+          >
+            <motion.div
+              variants={fadeUp}
+              className="flex items-center gap-3 mb-8"
+            >
               <Link href="/">
                 <motion.span
                   className="text-4xl text-yellow-400 leading-none cursor-pointer"
                   whileHover={{ scale: 1.15, rotate: 15 }}
                   animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                 >
                   ⬡
                 </motion.span>
@@ -154,30 +207,47 @@ export default function RegisterPage() {
               </div>
             </motion.div>
 
-            <motion.h1 variants={fadeUp} className="text-4xl font-black text-zinc-900 tracking-tight mb-2 leading-tight">
-              Create your<br />
+            <motion.h1
+              variants={fadeUp}
+              className="text-4xl font-black text-zinc-900 tracking-tight mb-2 leading-tight"
+            >
+              Create your
+              <br />
               <span className="text-yellow-400">account</span>
             </motion.h1>
             <motion.p variants={fadeUp} className="text-zinc-500 text-sm">
               Join the operations. Already have one?{" "}
-              <Link href="/login" className="text-yellow-500 hover:text-yellow-600 font-semibold transition-colors">
+              <Link
+                href="/sign-in"
+                className="text-yellow-500 hover:text-yellow-600 font-semibold transition-colors"
+              >
                 Sign in
               </Link>
             </motion.p>
           </motion.div>
 
           {/* Fields */}
-          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col gap-4">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex flex-col gap-4"
+          >
             {fields.map(({ id, label, type, placeholder, value, onChange }) => (
-              <motion.div key={id} variants={fadeUp} className="flex flex-col gap-1.5">
+              <motion.div
+                key={id}
+                variants={fadeUp}
+                className="flex flex-col gap-1.5"
+              >
                 <label className="text-xs font-mono uppercase tracking-widest text-zinc-400">
                   {label}
                 </label>
                 <motion.div
                   animate={{
-                    boxShadow: focused === id
-                      ? "0 0 0 3px rgba(234,179,8,0.25)"
-                      : "0 0 0 0px rgba(234,179,8,0)",
+                    boxShadow:
+                      focused === id
+                        ? "0 0 0 3px rgba(234,179,8,0.25)"
+                        : "0 0 0 0px rgba(234,179,8,0)",
                   }}
                   transition={{ duration: 0.2 }}
                   className="rounded-xl overflow-hidden"
@@ -230,7 +300,11 @@ export default function RegisterPage() {
                   <span className="flex items-center justify-center gap-2">
                     <motion.span
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                      transition={{
+                        duration: 0.8,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
                       className="inline-block"
                     >
                       ⬡
@@ -271,29 +345,18 @@ export default function RegisterPage() {
         animate="visible"
         className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center"
       >
-        {/* Image tinted over yellow */}
+        {/* Image */}
         <Image
           fill
-          src="/register/register.avif"
+          src="/Sign-Up/Sign-up.jpg"
           alt="Endfield background"
           className="object-cover mix-blend-multiply"
         />
 
-        {/* Noise texture overlay for depth */}
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
-          }}
-        />
-
-        {/* Gradient vignette */}
-        {/* <div className="absolute inset-0 bg-linear-to-br from-yellow-200/40 via-transparent to-yellow-500/30" />
-        <div className="absolute inset-0 bg-linear-to-t from-yellow-400/50 via-transparent to-transparent" /> */}
-        <div className="absolute inset-0 bg-linear-to-r from-black/95 via-black/65 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/65 to-transparent" />
         <div className="absolute inset-0 bg-linear-to-t from-zinc-950/80 via-transparent to-transparent" />
 
-        {/* Hex particles — zinc colored on yellow bg */}
+        {/* Hex particles on image panel */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(10)].map((_, i) => (
             <motion.span
@@ -301,12 +364,15 @@ export default function RegisterPage() {
               className="absolute text-yellow-300/75 select-none"
               style={{
                 fontSize: `${20 + (i % 4) * 14}px`,
-                left: `${8 + (i * 9) % 80}%`,                
-                top: `${10 + (i * 11) % 75}%`,
+                left: `${8 + ((i * 9) % 80)}%`,
+                top: `${10 + ((i * 11) % 75)}%`,
               }}
               animate={{ rotate: 360, opacity: [0.1, 0.3, 0.1] }}
-              transition={{ 
-                duration: 20 + (i % 3), repeat: Infinity, delay: i * 0.35, ease: "linear" 
+              transition={{
+                duration: 20 + (i % 3),
+                repeat: Infinity,
+                delay: i * 0.35,
+                ease: "linear",
               }}
             >
               ⬡
@@ -321,14 +387,14 @@ export default function RegisterPage() {
           transition={{ delay: 0.6, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="relative z-10 text-center px-12 max-w-sm"
         >
-
           <motion.h2
             className="text-3xl font-black text-yellow-300 tracking-tight mb-3 leading-tight"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.7 }}
           >
-            Daily Ops<br />
+            Daily Ops
+            <br />
             <span className="text-white drop-shadow-sm">Await You</span>
           </motion.h2>
 
@@ -338,9 +404,9 @@ export default function RegisterPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.7 }}
           >
-            Track missions, manage progress, and stay on top of every daily operation in Arknights: Endfield.
+            Track missions, manage progress, and stay on top of every daily
+            operation in Arknights: Endfield.
           </motion.p>
-
         </motion.div>
 
         {/* Bottom corner brand */}
@@ -351,10 +417,11 @@ export default function RegisterPage() {
           transition={{ delay: 1.4 }}
         >
           <span className="text-yellow-300 text-lg">⬡</span>
-          <span className="text-yellow-300 text-xs font-black tracking-widest">ENDLIFE</span>
+          <span className="text-yellow-300 text-xs font-black tracking-widest">
+            ENDLIFE
+          </span>
         </motion.div>
       </motion.div>
-
     </div>
   );
 }

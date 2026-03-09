@@ -126,7 +126,7 @@ function GlobalProgressCard({ data }: { data: GlobalProgressResult }) {
       </div>
 
       {/* Category breakdown */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {data.detail.map((cat) => {
           const catPct =
             cat.total_tasks === 0
@@ -291,7 +291,7 @@ export default function DailyPage() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full p-4">
       {/* Page header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -309,23 +309,23 @@ export default function DailyPage() {
       {/* Global progress — full width */}
       {globalProgress && <GlobalProgressCard data={globalProgress} />}
 
-      {/* Sanity + Activity — side by side, each half width */}
+      {/* Sanity + Activity — side by side */}
       {userId && (
-        <div className="flex gap-4 mb-6">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <SanityCard userId={userId} />
           <ActivityCard level={activityLevel} />
         </div>
       )}
 
-      {/* Checklist */}
-      <div className="grid grid-cols-3 gap-6 items-start">
+      {/* Checklist — items-stretch forces all cards in each row to match the tallest */}
+      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         {tree.map((cat, ci) => (
           <motion.div
             key={cat.categoryId}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: ci * 0.06 }}
-            className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm"
+            className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm flex flex-col"
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-extrabold text-zinc-900 uppercase tracking-wide">
@@ -338,7 +338,8 @@ export default function DailyPage() {
               )}
             </div>
 
-            <div className="flex flex-col gap-5">
+            {/* flex-1 makes the content area fill remaining card height */}
+            <div className="flex flex-col gap-5 flex-1">
               {cat.groups.map((group) => (
                 <div key={group.groupId}>
                   <p className="text-s font-bold text-yellow-400 uppercase tracking-widest mb-3 px-1">

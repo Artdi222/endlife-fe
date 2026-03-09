@@ -150,13 +150,13 @@ export default function TaskItem({
             +{rewardPoint}
           </span>
         )}
-        <div className="flex items-center gap-1.5 bg-zinc-100 rounded-xl px-2 py-1">
+        <div className="flex items-center gap-1.5 bg-yellow-300 rounded-xl px-2 py-1">
           <button
             onClick={() => updateProgress(progress - 1)}
             disabled={loading || progress <= 0}
-            className="w-5 h-5 rounded-lg hover:bg-pink-100 hover:text-pink-500 flex items-center justify-center transition-colors disabled:opacity-30"
+            className="w-5 h-5 rounded-lg hover:bg-black hover:text-white flex items-center justify-center transition-colors disabled:opacity-30"
           >
-            <Minus size={11} />
+            <Minus size={11} strokeWidth={4} />
           </button>
           <span className="text-sm font-bold text-zinc-700 min-w-12 text-center">
             {progress}/{maxProgress}
@@ -168,7 +168,7 @@ export default function TaskItem({
               progress >= maxProgress ||
               (isActivityTask && activityLocked)
             }
-            className="w-5 h-5 rounded-lg hover:bg-cyan-100 hover:text-cyan-500 flex items-center justify-center transition-colors disabled:opacity-30"
+            className="w-5 h-5 rounded-lg hover:bg-black hover:text-white flex items-center justify-center transition-colors disabled:opacity-30"
           >
             <Plus size={11} />
           </button>

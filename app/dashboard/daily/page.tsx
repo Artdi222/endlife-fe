@@ -126,7 +126,7 @@ function GlobalProgressCard({ data }: { data: GlobalProgressResult }) {
       </div>
 
       {/* Category breakdown */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         {data.detail.map((cat) => {
           const catPct =
             cat.total_tasks === 0
@@ -163,7 +163,7 @@ function GlobalProgressCard({ data }: { data: GlobalProgressResult }) {
   );
 }
 
-// Sanity Card 
+// Sanity Card
 function SanityCard({ userId }: { userId: number }) {
   return (
     <motion.div
@@ -193,7 +193,7 @@ function SanityCard({ userId }: { userId: number }) {
   );
 }
 
-// Activity Card 
+// Activity Card
 function ActivityCard({ level }: { level: number }) {
   return (
     <motion.div
@@ -318,7 +318,7 @@ export default function DailyPage() {
       )}
 
       {/* Checklist */}
-      <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-3 gap-6 items-start">
         {tree.map((cat, ci) => (
           <motion.div
             key={cat.categoryId}
@@ -328,7 +328,7 @@ export default function DailyPage() {
             className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm"
           >
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-base font-extrabold text-zinc-900 uppercase tracking-wide">
+              <h2 className="text-lg font-extrabold text-zinc-900 uppercase tracking-wide">
                 {cat.categoryName}
               </h2>
               {cat.isActivityCategory && activityLocked && (
@@ -341,7 +341,7 @@ export default function DailyPage() {
             <div className="flex flex-col gap-5">
               {cat.groups.map((group) => (
                 <div key={group.groupId}>
-                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3 px-1">
+                  <p className="text-s font-bold text-yellow-400 uppercase tracking-widest mb-3 px-1">
                     {group.groupName}
                   </p>
 

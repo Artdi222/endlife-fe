@@ -1,5 +1,5 @@
-import { request } from "./base";
-import type { User, CreateUserDTO, UpdateUserDTO } from "../types";
+import { request } from "../base";
+import type { User, CreateUserDTO, UpdateUserDTO } from "../../types";
 
 export const usersApi = {
   getAll: () => request<{ data: User[] }>("/users"),

@@ -1,5 +1,5 @@
-import { request } from "./base";
-import type { Group, SubGroup } from "../types";
+import { request } from "../base";
+import type { Group, SubGroup } from "../../types";
 
 export const groupsApi = {
   getByCategoryId: (categoryId: number) =>

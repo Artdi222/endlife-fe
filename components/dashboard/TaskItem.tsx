@@ -36,7 +36,8 @@ export default function TaskItem({
   const isCompleted = progress >= maxProgress;
 
   const isCheckLocked = isActivityTask && activityLocked && !isCompleted;
-  const isIncrementLocked = isActivityTask && activityLocked && progress >= maxProgress;
+  const isIncrementLocked =
+    isActivityTask && activityLocked && progress >= maxProgress;
 
   const updateProgress = async (newProgress: number) => {
     const clamped = Math.max(0, Math.min(newProgress, maxProgress));

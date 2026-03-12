@@ -1,8 +1,10 @@
 export * from "./auth.api";
-export * from "./category.api";
-export * from "./daily.api";
-export * from "./group.api";
-export * from "./task.api";
-export * from "./user.api";
-export * from "./admin.api";
-
+export * from "./daily/category.api";
+export * from "./daily/daily.api";
+export * from "./daily/group.api";
+export * from "./daily/task.api";
+export * from "./daily/user.api";
+export * from "./daily/admin.api";
+export * from "./ascension/character.api";
+export * from "./ascension/weapon.api";
+export * from "./ascension/item.api";

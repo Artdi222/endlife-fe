@@ -4,12 +4,7 @@ import DataTable from "@/components/admin/DataTable";
 import Modal from "@/components/admin/Modal";
 import Toast from "@/components/admin/Toast";
 import { FormField, inputCls, selectCls } from "@/components/admin/FormField";
-import {
-  tasksApi,
-  groupsApi,
-  subGroupsApi,
-  categoriesApi,
-} from "@/lib/api/index";
+import { tasksApi, groupsApi, subGroupsApi, categoriesApi } from "@/lib/api";
 import type { Task, Group, SubGroup } from "@/lib/types";
 
 const empty: Omit<Task, "id"> = {

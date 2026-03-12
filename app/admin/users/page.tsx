@@ -4,7 +4,7 @@ import DataTable from "@/components/admin/DataTable";
 import Modal from "@/components/admin/Modal";
 import Toast from "@/components/admin/Toast";
 import { FormField, inputCls, selectCls } from "@/components/admin/FormField";
-import { usersApi } from "@/lib/api/user.api";
+import { usersApi } from "@/lib/api";
 import type { User, CreateUserDTO, UpdateUserDTO } from "@/lib/types";
 
 const emptyCreate: CreateUserDTO = {

@@ -1,5 +1,5 @@
-import { request } from "./base";
-import type { Task } from "../types";
+import { request } from "../base";
+import type { Task } from "../../types";
 
 export const tasksApi = {
   getByGroupId: (groupId: number) =>

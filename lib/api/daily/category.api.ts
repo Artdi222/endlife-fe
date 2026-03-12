@@ -1,5 +1,5 @@
-import { request } from "./base";
-import type { Category } from "../types";
+import { request } from "../base";
+import type { Category } from "../../types";
 
 export const categoriesApi = {
   getAll: () => request<{ data: Category[] }>("/categories"),

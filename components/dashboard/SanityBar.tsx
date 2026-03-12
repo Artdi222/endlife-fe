@@ -165,7 +165,7 @@ export default function SanityBar({ userId, dark = false }: SanityBarProps) {
 
   if (loading) return null;
 
-  // Dark mode 
+  // Dark mode
   if (dark) {
     return (
       <div className="flex flex-col gap-3">

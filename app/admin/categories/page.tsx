@@ -4,7 +4,7 @@ import DataTable from "@/components/admin/DataTable";
 import Modal from "@/components/admin/Modal";
 import Toast from "@/components/admin/Toast";
 import { FormField, inputCls } from "@/components/admin/FormField";
-import { categoriesApi } from "@/lib/api/index";
+import { categoriesApi } from "@/lib/api";
 import type { Category } from "@/lib/types";
 
 const empty = { name: "", order_index: 0 };

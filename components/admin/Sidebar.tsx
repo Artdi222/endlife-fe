@@ -2,44 +2,66 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowLeftCircle } from "lucide-react";
+import {
+  ArrowLeftCircle,
+  LayoutDashboard,
+  Users,
+  ChevronRight,
+  CalendarCheck,
+  Layers,
+  FolderOpen,
+  ListChecks,
+  CheckSquare,
+  Sword,
+  Package,
+  User,
+  Zap,
+  Wrench,
+} from "lucide-react";
 
 interface NavItem {
   label: string;
   href: string;
-  icon: string;
 }
-
 interface NavGroup {
   label: string;
-  icon: string;
+  icon: React.ReactNode;
   items: NavItem[];
 }
 
 const navGroups: NavGroup[] = [
   {
     label: "User Master",
-    icon: "◉",
-    items: [{ label: "Users", href: "/admin/users", icon: "→" }],
+    icon: <Users size={15} />,
+    items: [{ label: "Users", href: "/admin/users" }],
   },
   {
     label: "Daily Master",
-    icon: "◈",
+    icon: <CalendarCheck size={15} />,
     items: [
-      { label: "Categories", href: "/admin/categories", icon: "→" },
-      { label: "Groups", href: "/admin/groups", icon: "→" },
-      { label: "Sub Groups", href: "/admin/sub-groups", icon: "→" },
-      { label: "Tasks", href: "/admin/tasks", icon: "→" },
+      { label: "Categories", href: "/admin/categories" },
+      { label: "Groups", href: "/admin/groups" },
+      { label: "Sub Groups", href: "/admin/sub-groups" },
+      { label: "Tasks", href: "/admin/tasks" },
     ],
   },
   {
     label: "General Master",
-    icon: "◇",
+    icon: <Layers size={15} />,
     items: [
-      { label: "Characters", href: "/admin/characters", icon: "→" },
-      { label: "Weapons", href: "/admin/weapons", icon: "→" },
-      { label: "Gears", href: "/admin/gears", icon: "→" },
-      { label: "Items", href: "/admin/items", icon: "→" },
+      { label: "Characters", href: "/admin/characters" },
+      { label: "Weapons", href: "/admin/weapons" },
+      { label: "Items", href: "/admin/items" },
+    ],
+  },
+  {
+    label: "Ascension Master",
+    icon: <Zap size={15} />,
+    items: [
+      { label: "Char. Stages", href: "/admin/ascension/character-stages" },
+      { label: "Weapon Stages", href: "/admin/ascension/weapon-stages" },
+      { label: "Skills", href: "/admin/ascension/skills" },
+      { label: "Skill Levels", href: "/admin/ascension/skill-levels" },
     ],
   },
 ];
@@ -47,18 +69,12 @@ const navGroups: NavGroup[] = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-
-  // Track which groups are open — Daily Master open by default
   const [open, setOpen] = useState<Record<string, boolean>>({
     "Daily Master": true,
   });
 
   const toggle = (label: string) =>
     setOpen((prev) => ({ ...prev, [label]: !prev[label] }));
-
-  // Check if any item in a group is active
-  const groupHasActive = (group: NavGroup) =>
-    group.items.some((item) => pathname === item.href);
 
   return (
     <aside className="fixed top-0 left-0 h-screen w-56 bg-zinc-900 border-r border-zinc-800 flex flex-col z-50">
@@ -75,7 +91,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Dashboard — standalone, always visible */}
+      {/* Dashboard */}
       <div className="px-3 pt-3">
         <Link
           href="/admin"
@@ -86,47 +102,36 @@ export default function Sidebar() {
                 : "text-zinc-400 hover:text-white hover:bg-zinc-800"
             }`}
         >
-          <span className="text-base w-5 text-center">▣</span>
+          <LayoutDashboard size={15} />
           Dashboard
         </Link>
       </div>
 
-      {/* Collapsible groups */}
+      {/* Nav groups */}
       <nav className="flex-1 flex flex-col gap-1 p-3 overflow-y-auto">
         {navGroups.map((group) => {
           const isOpen = open[group.label] ?? false;
-          const hasActive = groupHasActive(group);
+          const hasActive = group.items.some((i) => pathname === i.href);
 
           return (
             <div key={group.label}>
-              {/* Group header */}
               <button
                 onClick={() => toggle(group.label)}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold transition-all
-                  ${
-                    hasActive
-                      ? "text-yellow-300"
-                      : "text-zinc-400 hover:text-white hover:bg-zinc-800"
-                  }`}
+                  ${hasActive ? "text-yellow-300" : "text-zinc-400 hover:text-white hover:bg-zinc-800"}`}
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-base w-5 text-center">
-                    {group.icon}
-                  </span>
+                <div className="flex items-center gap-2.5">
+                  {group.icon}
                   <span>{group.label}</span>
                 </div>
-                <span
-                  className={`text-xs transition-transform duration-200 ${isOpen ? "rotate-90" : "rotate-0"}`}
-                >
-                  ›
-                </span>
+                <ChevronRight
+                  size={13}
+                  className={`transition-transform duration-200 ${isOpen ? "rotate-90" : "rotate-0"}`}
+                />
               </button>
 
-              {/* Group items */}
               <div
-                className={`overflow-hidden transition-all duration-200 ease-in-out ${
-                  isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                }`}
+                className={`overflow-hidden transition-all duration-200 ease-in-out ${isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
               >
                 <div className="ml-4 pl-4 border-l border-zinc-800 mt-1 mb-1 flex flex-col gap-0.5">
                   {group.items.map((item) => {

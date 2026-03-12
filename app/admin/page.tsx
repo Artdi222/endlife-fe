@@ -2,12 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Typed from "typed.js";
-import {
-  categoriesApi,
-  groupsApi,
-  subGroupsApi,
-  tasksApi,
-} from "@/lib/api/index";
+import { categoriesApi, groupsApi, subGroupsApi, tasksApi } from "@/lib/api";
 
 const statDefs = [
   { label: "Categories", icon: "◈", key: "categories" },

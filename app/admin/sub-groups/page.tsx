@@ -4,7 +4,7 @@ import DataTable from "@/components/admin/DataTable";
 import Modal from "@/components/admin/Modal";
 import Toast from "@/components/admin/Toast";
 import { FormField, inputCls, selectCls } from "@/components/admin/FormField";
-import { subGroupsApi, groupsApi, categoriesApi } from "@/lib/api/index";
+import { subGroupsApi, groupsApi, categoriesApi } from "@/lib/api";
 import type { SubGroup, Group, Category } from "@/lib/types";
 
 const empty = { name: "", group_id: 0, order_index: 0 };

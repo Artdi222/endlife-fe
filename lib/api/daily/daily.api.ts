@@ -1,4 +1,4 @@
-import { request } from "./base";
+import { request } from "../base";
 import type {
   DailyChecklistRow,
   UpdateTaskProgressDTO,
@@ -6,7 +6,7 @@ import type {
   GlobalProgressResult,
   SanityResult,
   UpdateSanityDTO,
-} from "../types";
+} from "../../types";
 
 export const dailyApi = {
   getChecklist: (userId: number, date: string) =>

@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { motion, AnimatePresence, Variants, useScroll, useTransform, useSpring } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, Variants, useScroll, useTransform, useSpring } from "framer-motion";
 
   //  LOADING SCREEN
 function LoadingScreen({ onFinish }: { onFinish: () => void }) {
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState<"loading" | "done">("loading");
+  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -144,9 +145,10 @@ function Particles() {
     </div>
   );
 }
-
   //  MAIN PAGE
 export default function Home() {
+  const [showVideo, setShowVideo] = useState(false);
+  const [videoPhase, setVideoPhase] = useState<"render" | "idle">("render");
   const [isLoading, setIsLoading] = useState(true);
   const heroRef = useRef<HTMLElement>(null);
 
@@ -226,30 +228,6 @@ export default function Home() {
                   End<span className="text-yellow-300">Life</span>
                 </div>
               </div>
-
-              {/* <div className="flex items-center gap-3">
-                {[
-                  { label: "Sign In", href: "/login" },
-                  { label: "Sign Up", href: "/register" },
-                ].map(({ label, href }, i) => (
-                  <motion.div
-                    key={label}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: isLoading ? 0 : 1, x: isLoading ? 20 : 0 }}
-                    transition={{ delay: 0.6 + i * 0.1, duration: 0.5 }}
-                  >
-                    <Link href={href}>
-                      <motion.button
-                        whileHover={{ scale: 1.06, boxShadow: "0 0 20px rgba(253,224,71,0.3)" }}
-                        whileTap={{ scale: 0.95 }}
-                        className="bg-yellow-300 hover:bg-yellow-400 text-zinc-900 rounded-md font-semibold px-5 py-2 text-sm cursor-pointer transition-colors"
-                      >
-                        {label}
-                      </motion.button>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div> */}
             </div>
           </div>
         </motion.nav>
@@ -389,6 +367,132 @@ export default function Home() {
           </motion.div>
         </section>
 
+        <section className="relative h-screen min-h-150 overflow-hidden flex items-center justify-center bg-white">
+          {/* bisa kamu menambahkan sesuatu di belakang screen yang ini soalnya terlalu polos 2*/}
+          <div className="w-full flex items-center justify-center relative h-full">
+               <div className="flex justify-center items-center gap-72 w-full">
+                <div className="flex flex-col gap-8 justify-center items-center w-32">
+                  <div className="text-gray-400">▲</div>
+
+                  <button className="w-16 h-16 border-2 border-yellow-300 rounded-full flex items-center justify-center hover:bg-yellow-100 transition">
+                    icon
+                  </button>
+
+                  <button className="w-16 h-16 border-2 border-yellow-300 rounded-full flex items-center justify-center hover:bg-yellow-100 transition">
+                    icon
+                  </button>
+
+                  <button className="w-16 h-16 border-2 border-yellow-300 rounded-full flex items-center justify-center hover:bg-yellow-100 transition">
+                    icon
+                  </button>
+
+                  <button className="w-16 h-16 border-2 border-yellow-300 rounded-full flex items-center justify-center hover:bg-yellow-100 transition">
+                    icon
+                  </button>
+
+                  <div className="text-gray-400">▼</div>
+                </div>
+                <div className="flex justify-end items-end z-1">
+{showVideo ? (
+  <div className="relative w-212">
+
+    <video
+      autoPlay
+      muted
+      playsInline
+      onEnded={() => setVideoPhase("idle")}
+      className={`absolute inset-0 w-[850px] h-[600px] object-cover object-left transition-opacity duration-500 mix-blend-lighten
+        ${videoPhase === "render" ? "opacity-100" : "opacity-0"}`}
+    >
+      <source src="/landing/video/enter/enter_yvonne.mp4" />
+    </video>
+
+    <video
+      autoPlay
+      muted
+      preload="auto"
+      loop
+      playsInline
+      className={`absolute inset-0 w-[850px] h-[600px] object-cover object-left transition-opacity duration-500  mix-blend-lighten   
+        ${videoPhase === "idle" ? "opacity-100" : "opacity-0"}`}
+    >
+      <source src="/landing/video/idle/idle_yvonne.mp4" />
+    </video>
+
+  </div>
+) : (
+  <img
+    src="https://endfield.wiki.gg/images/Yvonne_Splash_Art.png"
+    className="w-212 object-contain translate-x-32"
+  />
+)}
+                </div>
+                <div className="absolute w-full h-full left-98 z-2 pointer-events-none">
+                  <div className="top-16 absolute ">
+                    <div className="justify-baseline gap-20 font-medium px-5 text-xs py-0.5 flex bg-gray-300">
+                      <span className="flex">nama</span>
+                      <span className="flex">1/?</span>
+                    </div>
+                    <div className="flex flex-row gap-2 mt-1 absolute top-8 w-8">
+                      <img src="https://img.game8.co/4392229/1ebb6dd49575bea13ddd89ee088e0145.png/show" alt="" className=""/>
+                      <img src="https://img.game8.co/4392229/1ebb6dd49575bea13ddd89ee088e0145.png/show" alt="" className=""/>
+                      <img src="https://img.game8.co/4392229/1ebb6dd49575bea13ddd89ee088e0145.png/show" alt="" className=""/>
+                      <img src="https://img.game8.co/4392229/1ebb6dd49575bea13ddd89ee088e0145.png/show" alt="" className=""/>
+                      <img src="https://img.game8.co/4392229/1ebb6dd49575bea13ddd89ee088e0145.png/show" alt="" className=""/>
+                      <img src="https://img.game8.co/4392229/1ebb6dd49575bea13ddd89ee088e0145.png/show" alt="" className=""/>
+                    </div>
+                  </div>
+                  <div className="absolute bottom-16 w-full max-w-md">
+                    <div className="flex items-baseline gap-4 mb-5 ">
+                      <div className="flex items-center">
+                        <img
+                          src="https://endfield.wiki.gg/images/thumb/Striker.png/24px-Striker.png?267717"
+                          className="bg-black w-6 h-6 p-1"
+                        />
+
+                        <img
+                          src="https://endfield.wiki.gg/images/thumb/Cryo.png/22px-Cryo.png?c1cf2b"
+                          className="bg-cyan-400 w-6 h-6 p-1"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl text-gray-400">[</span>
+                        <span className="text-4xl font-bold">Nama</span>
+                        <span className="text-2xl text-gray-400">]</span>
+                      </div>
+                    </div>
+                    <hr className="my-5 flex border-b -z-50"/>
+                    <div className=" flex flex-row mb-3 gap-4">
+                      <div className="flex">
+                        <p className="py-0.5 px-5 text-xs font-medium bg-black text-white">fraksi</p>
+                        <p className="py-0.5 px-15 text-xs font-medium bg-gray-300">fraksi</p>
+                      </div>
+                      <div className="flex">
+                        <p className="py-0.5 px-5 text-xs font-medium bg-black text-white">Ras</p>
+                        <p className="py-0.5 px-15 text-xs font-medium bg-gray-300">ras</p>
+                      </div>
+                    </div>
+                    <span className="text-sm">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Suscipit libero odio fugiat maxime tenetur aliquam ea obcaecati iste at quis minima magnam dicta facere, itaque aperiam corporis in deserunt nisi? Perspiciatis dolor aperiam aspernatur corporis, vitae odit sint quod dicta!</span>
+                  </div>
+                </div>
+<button
+  onClick={() => setShowVideo(!showVideo)}
+  className="flex items-center gap-2 z-50 text-sm text-gray-600"
+>
+  <span>Art</span>
+
+  <div className={`w-10 h-5 rounded-full relative transition
+    ${showVideo ? "bg-yellow-300" : "bg-gray-300"}`}>
+
+    <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition
+      ${showVideo ? "translate-x-5" : "translate-x-1"}`} />
+  </div>
+
+  <span>3D</span>
+</button>
+               </div>
+          </div>
+        </section>
         {/* ── FOOTER ── */}
         <motion.footer
           className="bg-zinc-950 border-t border-white/5 py-8"

@@ -5,9 +5,9 @@ import Image from "next/image";
 import { dailyApi } from "@/lib/api";
 import type { DailyChecklistRow, GlobalProgressResult } from "@/lib/types";
 import { getUserIdFromToken, getTodayDate } from "@/lib/utils/auth.utils";
-import TaskItem from "@/components/dashboard/TaskItem";
-import SanityBar from "@/components/dashboard/SanityBar";
-import ActivityLevel from "@/components/dashboard/ActivityLevel";
+import TaskItem from "@/components/dashboard/daily/TaskItem";
+import SanityBar from "@/components/dashboard/daily/SanityBar";
+import ActivityLevel from "@/components/dashboard/daily/ActivityLevel";
 
 const ACTIVITY_CATEGORY = "Operation Manual (Daily)";
 
@@ -306,7 +306,7 @@ export default function DailyPage() {
         </h1>
       </motion.div>
 
-      {/* Global progress — full width */}
+      {/* Global progress card full width */}
       {globalProgress && <GlobalProgressCard data={globalProgress} />}
 
       {/* Sanity + Activity — side by side */}
@@ -317,7 +317,7 @@ export default function DailyPage() {
         </div>
       )}
 
-      {/* Checklist — items-stretch forces all cards in each row to match the tallest */}
+      {/* Checklist cards */}
       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         {tree.map((cat, ci) => (
           <motion.div
@@ -338,7 +338,6 @@ export default function DailyPage() {
               )}
             </div>
 
-            {/* flex-1 makes the content area fill remaining card height */}
             <div className="flex flex-col gap-5 flex-1">
               {cat.groups.map((group) => (
                 <div key={group.groupId}>

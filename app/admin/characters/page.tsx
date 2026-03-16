@@ -24,6 +24,14 @@ import { FormField, inputCls, selectCls } from "@/components/admin/FormField";
 // ── Constants ────────────────────────────────────────────────
 const ELEMENTS = ["Heat", "Cryo", "Electric", "Physical", "Nature"];
 const WEAPON_TYPES = ["Sword", "Greatsword", "Gun", "Polearm", "Arts Unit"];
+const CLASSES = [
+  "Guard",
+  "Caster",
+  "Striker",
+  "Vanguard",
+  "Defender",
+  "Supporter",
+];
 const RARITIES = [4, 5, 6];
 const MEDIA_FIELDS = [
   {
@@ -59,11 +67,12 @@ const emptyForm: CreateCharacterDTO = {
   weapon_type: "Sword",
   race: "",
   faction: "",
+  class: "",
   description: "",
   order_index: 0,
 };
 
-// ── Rarity stars ─────────────────────────────────────────────
+// Rarity Stars
 function RarityStars({ rarity }: { rarity: number }) {
   return (
     <div className="flex items-center gap-0.5">
@@ -74,7 +83,7 @@ function RarityStars({ rarity }: { rarity: number }) {
   );
 }
 
-// ── Media Upload Row ──────────────────────────────────────────
+// Media Upload
 function MediaUploadRow({
   character,
   onUploaded,
@@ -93,7 +102,6 @@ function MediaUploadRow({
       const res = await charactersApi.uploadMedia(character.id, field, file);
       onUploaded(res.data);
     } catch {
-      // silent — toast handled by parent
     } finally {
       setUploading(null);
     }
@@ -136,7 +144,7 @@ function MediaUploadRow({
   );
 }
 
-// ── Character Form Modal ──────────────────────────────────────
+// Character Modal
 function CharacterModal({
   mode,
   initial,
@@ -157,6 +165,7 @@ function CharacterModal({
           weapon_type: initial.weapon_type,
           race: initial.race ?? "",
           faction: initial.faction ?? "",
+          class: initial.class ?? "",
           description: initial.description ?? "",
           order_index: initial.order_index,
         }
@@ -234,7 +243,7 @@ function CharacterModal({
           <FormField label="Name">
             <input
               className={inputCls}
-              placeholder="e.g. Leevatain"
+              placeholder="e.g. Laevatain"
               value={form.name}
               onChange={(e) => set("name", e.target.value)}
             />
@@ -301,6 +310,20 @@ function CharacterModal({
             </FormField>
           </div>
 
+          {/* Class */}
+          <FormField label="Class">
+            <select
+              className={selectCls}
+              value={form.class ?? ""}
+              onChange={(e) => set("class", e.target.value)}
+            >
+              <option value="">Select class</option>
+              {CLASSES.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </FormField>
+
           {/* Description */}
           <FormField label="Description">
             <textarea
@@ -335,7 +358,7 @@ function CharacterModal({
               : "Save Changes"}
           </button>
 
-          {/* Media upload — shown after character is created/when editing */}
+          {/* Media upload shown after character is created/when editing */}
           {savedChar && (
             <div>
               <p className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-1">
@@ -364,7 +387,7 @@ function CharacterModal({
   );
 }
 
-// ── Delete Confirm ────────────────────────────────────────────
+// Delete Confirm
 function DeleteConfirm({
   character,
   onClose,
@@ -442,7 +465,7 @@ function DeleteConfirm({
   );
 }
 
-// ── Main Page ─────────────────────────────────────────────────
+// Characters Page
 export default function CharactersPage() {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [loading, setLoading] = useState(true);
@@ -480,10 +503,7 @@ export default function CharactersPage() {
   const handleSaved = (c: Character) => {
     setCharacters((prev) => {
       const exists = prev.find((x) => x.id === c.id);
-      const updated = exists
-        ? prev.map((x) => (x.id === c.id ? c : x))
-        : [...prev, c];
-      return updated;
+      return exists ? prev.map((x) => (x.id === c.id ? c : x)) : [...prev, c];
     });
     showToast(
       modal?.mode === "create" ? "Character created!" : "Character updated!",
@@ -502,6 +522,7 @@ export default function CharactersPage() {
       c.element.toLowerCase().includes(search.toLowerCase()) ||
       c.faction?.toLowerCase().includes(search.toLowerCase()) ||
       c.race?.toLowerCase().includes(search.toLowerCase()) ||
+      c.class?.toLowerCase().includes(search.toLowerCase()) ||
       c.weapon_type.toLowerCase().includes(search.toLowerCase()),
   );
 
@@ -536,6 +557,7 @@ export default function CharactersPage() {
     { key: "weapon_type", label: "Weapon" },
     { key: "race", label: "Race" },
     { key: "faction", label: "Faction" },
+    { key: "class", label: "Class" },
     {
       key: "media",
       label: "Media",
@@ -580,7 +602,7 @@ export default function CharactersPage() {
           />
           <input
             className="w-full bg-zinc-900 border border-zinc-700 rounded-xl pl-9 pr-3 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-yellow-400 transition-colors"
-            placeholder="Search name, element, faction..."
+            placeholder="Search name, element, class..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />

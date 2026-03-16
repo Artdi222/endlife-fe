@@ -7,11 +7,12 @@ import {
   Variants,
   useScroll,
   useTransform,
-  useSpring,
 } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
+import OperatorSection from "@/components/operator/operatorSection";
 
-//  LOADING SCREEN
+
+// ─── LOADING SCREEN ──────────────────────────────────────────────────────────
 function LoadingScreen({ onFinish }: { onFinish: () => void }) {
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState<"loading" | "done">("loading");
@@ -57,14 +58,11 @@ function LoadingScreen({ onFinish }: { onFinish: () => void }) {
       exit={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* Background glow */}
       <motion.div
         className="absolute w-96 h-96 rounded-full bg-yellow-300/5 blur-3xl"
         animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
-
-      {/* Hex grid */}
       <div className="flex flex-col items-center gap-2 relative z-10">
         <div className="flex gap-3">
           {[0, 1, 2].map((i) => (
@@ -81,8 +79,6 @@ function LoadingScreen({ onFinish }: { onFinish: () => void }) {
           ))}
         </div>
       </div>
-
-      {/* Logo */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -93,31 +89,7 @@ function LoadingScreen({ onFinish }: { onFinish: () => void }) {
           End<span className="text-yellow-300">Life</span>
         </div>
         <div className="text-zinc-500 text-xs uppercase tracking-[0.3em] mt-1 overflow-hidden">
-          {[
-            "I",
-            "n",
-            "i",
-            "t",
-            "i",
-            "a",
-            "l",
-            "i",
-            "z",
-            "i",
-            "n",
-            "g",
-            " ",
-            "O",
-            "p",
-            "e",
-            "r",
-            "a",
-            "t",
-            "i",
-            "o",
-            "n",
-            "s",
-          ].map((char, i) => (
+          {[..."Initializing Operations"].map((char, i) => (
             <motion.span
               key={i}
               initial={{ opacity: 0, y: 8 }}
@@ -130,8 +102,6 @@ function LoadingScreen({ onFinish }: { onFinish: () => void }) {
           ))}
         </div>
       </motion.div>
-
-      {/* Progress bar */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -164,18 +134,9 @@ function LoadingScreen({ onFinish }: { onFinish: () => void }) {
   );
 }
 
-//  FLOATING PARTICLES
-function Particles() {
-  const particles = Array.from({ length: 12 }, (_, i) => i);
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="absolute text-yellow-300/20 text-lg select-none">⬡</div>
-    </div>
-  );
-}
 
-//  MAIN PAGE
-export default function Home() {
+// Landing Page
+export default function LandingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const heroRef = useRef<HTMLElement>(null);
 
@@ -184,10 +145,8 @@ export default function Home() {
     offset: ["start start", "end start"],
   });
 
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-  const smoothBgY = useSpring(bgY, { stiffness: 80, damping: 20 });
 
   const navVariants: Variants = {
     hidden: { y: -80, opacity: 0 },
@@ -234,7 +193,7 @@ export default function Home() {
         animate={{ opacity: isLoading ? 0 : 1 }}
         transition={{ duration: 0.6 }}
       >
-        {/* nav */}
+        {/* ── NAV ── */}
         <motion.nav
           variants={navVariants}
           initial="hidden"
@@ -253,12 +212,11 @@ export default function Home() {
           </div>
         </motion.nav>
 
-        {/* hero */}
+        {/* Hero Section */}
         <section
           ref={heroRef}
           className="relative h-screen min-h-150 overflow-hidden flex items-center"
         >
-          {/* Parallax BG */}
           <motion.div
             className="absolute inset-0 bg-cover bg-center scale-110"
             style={{
@@ -269,9 +227,6 @@ export default function Home() {
           <div className="absolute inset-0 bg-linear-to-r from-black/95 via-black/65 to-transparent" />
           <div className="absolute inset-0 bg-linear-to-t from-zinc-950/80 via-transparent to-transparent" />
 
-          <Particles />
-
-          {/* Decorative hex */}
           <motion.div
             className="absolute right-8 top-1/2 -translate-y-1/2 text-yellow-300/8 text-[260px] select-none pointer-events-none"
             initial={{ opacity: 0, rotate: -30, scale: 0.7 }}
@@ -293,7 +248,6 @@ export default function Home() {
             ⬡
           </motion.div>
 
-          {/* Hero content */}
           <motion.div
             className="relative max-w-7xl mx-auto px-7 lg:px-8 w-full"
             style={{ y: contentY, opacity: heroOpacity }}
@@ -304,7 +258,6 @@ export default function Home() {
               initial="hidden"
               animate={isLoading ? "hidden" : "visible"}
             >
-              {/* Badge */}
               <motion.div variants={fadeLeft} className="mb-6 inline-flex">
                 <motion.span className="inline-flex items-center gap-2 bg-yellow-300/10 border border-yellow-300/30 text-yellow-300 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full backdrop-blur-sm">
                   <motion.span
@@ -316,7 +269,6 @@ export default function Home() {
                 </motion.span>
               </motion.div>
 
-              {/* Title */}
               <motion.h1
                 className="text-5xl lg:text-7xl font-black text-white leading-[1.05] mb-6 tracking-tight"
                 variants={stagger}
@@ -332,7 +284,6 @@ export default function Home() {
                 ))}
               </motion.h1>
 
-              {/* Description */}
               <motion.p
                 variants={fadeUp}
                 className="text-lg text-zinc-300 mb-10 leading-relaxed max-w-lg"
@@ -341,7 +292,6 @@ export default function Home() {
                 track missions, tasks, and progress — all in one place.
               </motion.p>
 
-              {/* CTA */}
               <motion.div
                 variants={fadeUp}
                 className="flex items-center gap-4 flex-wrap"
@@ -381,7 +331,6 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Scroll indicator */}
           <motion.div
             className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
             initial={{ opacity: 0, y: 10 }}
@@ -404,7 +353,17 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* ── FOOTER ── */}
+        {/* operator section */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <OperatorSection />
+        </motion.div>
+
+        {/* footer */}
         <motion.footer
           className="bg-zinc-950 border-t border-white/5 py-8"
           initial={{ opacity: 0 }}

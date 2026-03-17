@@ -83,7 +83,7 @@ export default function OperatorSection() {
     setViewMode((v) => (v === "2d" ? "3d" : "2d"));
   };
 
-  if (characters.length === 0) return null;
+  // if (characters.length === 0) return null;
 
   return (
     <section
@@ -264,10 +264,10 @@ export default function OperatorSection() {
                   justifyContent: "center",
                   pointerEvents: "none",
                 }}
-                initial={{ opacity: 0, x: 24 }}
+                initial={{ opacity: 0, x: 80 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -16 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                exit={{ opacity: [0, 1, 0, 1, 0, 1, 0, 1, 0], x: -0 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], opacity: { duration: 0.35 } }}
               >
                 {selectedChar.splash_art && !imgError ? (
                   <img

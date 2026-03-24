@@ -1,16 +1,17 @@
+import { useAuthStore } from "../store/auth.store";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-const getToken = () =>
-  typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+const getToken = (): string | null => useAuthStore.getState().token;
 
-const authHeaders = (): HeadersInit => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${getToken()}`,
-});
-
-const plainHeaders = (): HeadersInit => ({
-  "Content-Type": "application/json",
-});
+const buildHeaders = (options: RequestInit, withAuth: boolean): HeadersInit => {
+  const isFormData = options.body instanceof FormData;
+  const token = getToken();
+  return {
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
+    ...(withAuth && token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+};
 
 export async function request<T>(
   path: string,
@@ -19,9 +20,18 @@ export async function request<T>(
 ): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
-    headers: withAuth ? authHeaders() : plainHeaders(),
+    headers: buildHeaders(options, withAuth),
   });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.message || "Request failed");
+
+  // Safely parse JSON — body may be empty on some errors
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let json: any;
+  try {
+    json = await res.json();
+  } catch {
+    throw new Error(`Request failed with status ${res.status}`);
+  }
+
+  if (!res.ok) throw new Error(json?.message || "Request failed");
   return json;
 }

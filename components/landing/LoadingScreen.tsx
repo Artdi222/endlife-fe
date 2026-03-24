@@ -46,7 +46,7 @@ export default function LoadingScreen({ onFinish }: LoadingScreenProps) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[100] bg-zinc-950 flex flex-col items-center justify-center gap-10 overflow-hidden"
+      className="fixed inset-0 z-100 bg-zinc-950 flex flex-col items-center justify-center gap-10 overflow-hidden"
       exit={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >

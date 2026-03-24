@@ -9,15 +9,9 @@ import {
   ChevronRight,
   CalendarCheck,
   Layers,
-  FolderOpen,
-  ListChecks,
-  CheckSquare,
-  Sword,
-  Package,
-  User,
   Zap,
-  Wrench,
 } from "lucide-react";
+import { authApi } from "@/lib/api/auth.api";
 
 interface NavItem {
   label: string;
@@ -62,6 +56,7 @@ const navGroups: NavGroup[] = [
       { label: "Weapon Stages", href: "/admin/ascension/weapon-stages" },
       { label: "Skills", href: "/admin/ascension/skills" },
       { label: "Skill Levels", href: "/admin/ascension/skill-levels" },
+      { label: "Level Costs", href: "/admin/ascension/level-costs" },
     ],
   },
 ];
@@ -76,9 +71,13 @@ export default function Sidebar() {
   const toggle = (label: string) =>
     setOpen((prev) => ({ ...prev, [label]: !prev[label] }));
 
+  const handleLogout = () => {
+    authApi.logout();
+    router.replace("/sign-in");
+  };
+
   return (
     <aside className="fixed top-0 left-0 h-screen w-56 bg-zinc-900 border-r border-zinc-800 flex flex-col z-50">
-      {/* Brand */}
       <div className="flex items-center gap-3 px-5 py-5 border-b border-zinc-800">
         <span className="text-3xl text-yellow-300">⬡</span>
         <div>
@@ -91,28 +90,21 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Dashboard */}
       <div className="px-3 pt-3">
         <Link
           href="/admin"
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all
-            ${
-              pathname === "/admin"
-                ? "bg-yellow-300/10 text-yellow-300"
-                : "text-zinc-400 hover:text-white hover:bg-zinc-800"
-            }`}
+            ${pathname === "/admin" ? "bg-yellow-300/10 text-yellow-300" : "text-zinc-400 hover:text-white hover:bg-zinc-800"}`}
         >
           <LayoutDashboard size={15} />
           Dashboard
         </Link>
       </div>
 
-      {/* Nav groups */}
       <nav className="flex-1 flex flex-col gap-1 p-3 overflow-y-auto">
         {navGroups.map((group) => {
           const isOpen = open[group.label] ?? false;
           const hasActive = group.items.some((i) => pathname === i.href);
-
           return (
             <div key={group.label}>
               <button
@@ -126,32 +118,24 @@ export default function Sidebar() {
                 </div>
                 <ChevronRight
                   size={13}
-                  className={`transition-transform duration-200 ${isOpen ? "rotate-90" : "rotate-0"}`}
+                  className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
                 />
               </button>
-
               <div
                 className={`overflow-hidden transition-all duration-200 ease-in-out ${isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
               >
                 <div className="ml-4 pl-4 border-l border-zinc-800 mt-1 mb-1 flex flex-col gap-0.5">
-                  {group.items.map((item) => {
-                    const active = pathname === item.href;
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all
-                          ${
-                            active
-                              ? "bg-yellow-300/10 text-yellow-300 font-semibold"
-                              : "text-zinc-500 hover:text-white hover:bg-zinc-800"
-                          }`}
-                      >
-                        <span className="text-xs opacity-40">—</span>
-                        {item.label}
-                      </Link>
-                    );
-                  })}
+                  {group.items.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all
+                        ${pathname === item.href ? "bg-yellow-300/10 text-yellow-300 font-semibold" : "text-zinc-500 hover:text-white hover:bg-zinc-800"}`}
+                    >
+                      <span className="text-xs opacity-40">—</span>
+                      {item.label}
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>
@@ -159,14 +143,9 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Logout */}
       <div className="p-3 border-t border-zinc-800">
         <button
-          onClick={() => {
-            localStorage.removeItem("admin_token");
-            localStorage.removeItem("admin_role");
-            router.replace("/sign-in");
-          }}
+          onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-zinc-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
         >
           <ArrowLeftCircle size={17} strokeWidth={2.2} /> Logout

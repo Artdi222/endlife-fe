@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { dailyApi } from "@/lib/api";
 import type { DailyChecklistRow, GlobalProgressResult } from "@/lib/types";
-import { getUserIdFromToken, getTodayDate } from "@/lib/utils/auth.utils";
+import { getUserId, getTodayDate } from "@/lib/utils/auth.utils";
 import TaskItem from "@/components/dashboard/daily/TaskItem";
 import SanityBar from "@/components/dashboard/daily/SanityBar";
 import ActivityLevel from "@/components/dashboard/daily/ActivityLevel";
@@ -248,7 +248,7 @@ export default function DailyPage() {
   );
 
   useEffect(() => {
-    const uid = getUserIdFromToken();
+    const uid = getUserId();
     if (!uid) return;
     setUserId(uid);
     const init = async () => {

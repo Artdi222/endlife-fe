@@ -1,13 +1,7 @@
-export function getUserIdFromToken(): number | null {
-  if (typeof window === "undefined") return null;
-  const token = localStorage.getItem("admin_token");
-  if (!token) return null;
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.user_id ?? payload.id ?? null;
-  } catch {
-    return null;
-  }
+import { useAuthStore } from "../store/auth.store";
+
+export function getUserId(): number | null {
+  return useAuthStore.getState().user?.user_id ?? null;
 }
 
 export function getTodayDate(): string {

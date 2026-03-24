@@ -187,7 +187,7 @@ export default function HeroSection({ isLoading }: HeroSectionProps) {
 
           {/* Title */}
           <motion.h1
-            className="font-black leading-[1.0] tracking-tight mb-6"
+            className="font-black leading-none tracking-tight mb-6"
             style={{ fontSize: "clamp(44px, 7vw, 80px)", color: "#111111" }}
             variants={stagger}
           >

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/static-components */
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -8,14 +7,61 @@ import {
   ArrowLeftCircle,
   Menu,
   X,
+  TrendingUp,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { authApi } from "@/lib/api/auth.api";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Daily", href: "/dashboard/daily", icon: CalendarCheck },
+  { label: "Planner", href: "/dashboard/planner", icon: TrendingUp },
 ];
+
+const NavContent = ({
+  pathname,
+  onNavigate,
+  handleLogout,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+  handleLogout: () => void;
+}) => (
+  <>
+    <nav className="flex-1 px-3 py-5 flex flex-col gap-1">
+      {navItems.map(({ label, href, icon: Icon }) => {
+        const active = pathname === href;
+        return (
+          <Link key={href} href={href} onClick={onNavigate}>
+            <motion.div
+              whileHover={{ x: 3 }}
+              whileTap={{ scale: 0.97 }}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer
+                ${
+                  active
+                    ? "bg-yellow-300 text-zinc-900 shadow-sm"
+                    : "text-zinc-500 hover:bg-yellow-50 hover:text-zinc-900"
+                }`}
+            >
+              <Icon size={17} strokeWidth={2.2} />
+              {label}
+            </motion.div>
+          </Link>
+        );
+      })}
+    </nav>
+
+    <div className="p-3 border-t border-zinc-100 flex flex-col">
+      <button
+        onClick={handleLogout}
+        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-zinc-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
+      >
+        <ArrowLeftCircle size={17} strokeWidth={2.2} /> Logout
+      </button>
+    </div>
+  </>
+);
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -23,58 +69,16 @@ export default function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("admin_role");
-    localStorage.removeItem("admin_token");
+    authApi.logout();
     router.replace("/sign-in");
   };
 
-  const NavContent = ({ onNavigate }: { onNavigate?: () => void }) => (
-    <>
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-5 flex flex-col gap-1">
-        {navItems.map(({ label, href, icon: Icon }) => {
-          const active = pathname === href;
-          return (
-            <Link key={href} href={href} onClick={onNavigate}>
-              <motion.div
-                whileHover={{ x: 3 }}
-                whileTap={{ scale: 0.97 }}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-                  active
-                    ? "bg-yellow-300 text-zinc-900 shadow-sm"
-                    : "text-zinc-500 hover:bg-yellow-50 hover:text-zinc-900"
-                }`}
-              >
-                <Icon size={17} strokeWidth={2.2} />
-                {label}
-              </motion.div>
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* Bottom */}
-      <div className="p-3 border-t border-zinc-100 flex flex-col">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-zinc-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
-        >
-          <ArrowLeftCircle size={17} strokeWidth={2.2} /> Logout
-        </button>
-        <div className="pt-2">
-          <p className="text-[10px] font-mono text-zinc-300 uppercase tracking-widest">
-            © EndLife
-          </p>
-        </div>
-      </div>
-    </>
-  );
+ 
 
   return (
     <>
-      {/* ── DESKTOP Sidebar (lg+) ── */}
+      {/* Desktop */}
       <aside className="fixed left-0 top-0 h-screen w-56 bg-white border-r border-yellow-200 flex-col z-50 hidden lg:flex">
-        {/* Logo */}
         <div className="px-6 py-7 border-b border-yellow-100">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl text-yellow-300">⬡</span>
@@ -83,10 +87,10 @@ export default function Sidebar() {
             </span>
           </div>
         </div>
-        <NavContent />
+        <NavContent pathname={pathname} handleLogout={handleLogout} />
       </aside>
 
-      {/* ── MOBILE Topbar (below lg) ── */}
+      {/* Mobile topbar */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-yellow-200 flex items-center gap-3 px-4 py-3">
         <motion.button
           whileTap={{ scale: 0.9 }}
@@ -108,11 +112,10 @@ export default function Sidebar() {
         </div>
       </header>
 
-      {/* ── MOBILE Drawer ── */}
+      {/* Mobile drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               key="backdrop"
               initial={{ opacity: 0 }}
@@ -122,8 +125,6 @@ export default function Sidebar() {
               className="lg:hidden fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
               onClick={() => setMobileOpen(false)}
             />
-
-            {/* Drawer panel */}
             <motion.div
               key="drawer"
               initial={{ x: "-100%" }}
@@ -132,7 +133,6 @@ export default function Sidebar() {
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="lg:hidden fixed left-0 top-0 h-screen w-56 bg-white border-r border-yellow-200 flex flex-col z-50"
             >
-              {/* Logo */}
               <div className="px-6 py-7 border-b border-yellow-100 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <span className="text-2xl text-yellow-300">⬡</span>
@@ -148,7 +148,11 @@ export default function Sidebar() {
                   <X size={18} strokeWidth={2.2} />
                 </motion.button>
               </div>
-              <NavContent onNavigate={() => setMobileOpen(false)} />
+              <NavContent
+                pathname={pathname}
+                handleLogout={handleLogout}
+                onNavigate={() => setMobileOpen(false)}
+              />
             </motion.div>
           </>
         )}

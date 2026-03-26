@@ -7,6 +7,7 @@ import type {
   SummaryMaterial,
 } from "@/lib/types/ascension/userPlanner.types";
 import { MATERIAL_CATEGORY_ORDER } from "./constants";
+import Image from "next/image";
 
 interface SummaryPanelProps {
   summary: PlannerSummary | null;
@@ -28,7 +29,9 @@ function MaterialRow({ mat }: { mat: SummaryMaterial }) {
       {/* Item icon */}
       <div className="w-7 h-7 rounded-lg bg-zinc-100 shrink-0 overflow-hidden border border-zinc-200">
         {mat.image ? (
-          <img
+          <Image
+            width={128}
+            height={128}
             src={mat.image}
             alt={mat.name}
             className="w-full h-full object-cover"

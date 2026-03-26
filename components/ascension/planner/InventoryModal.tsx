@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { X, Package, Loader2, Search } from "lucide-react";
 import type { SummaryMaterial } from "@/lib/types/ascension/userPlanner.types";
 import { MATERIAL_CATEGORY_ORDER } from "./constants";
+import Image from "next/image";
 
 interface InventoryModalProps {
   materials: SummaryMaterial[]; // from summary — shows only what's needed
@@ -143,7 +144,9 @@ export default function InventoryModal({
                       <div key={m.item_id} className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-zinc-100 shrink-0 overflow-hidden border border-zinc-200">
                           {m.image ? (
-                            <img
+                            <Image
+                              width={32}
+                              height={32}
                               src={m.image}
                               alt={m.name}
                               className="w-full h-full object-cover"

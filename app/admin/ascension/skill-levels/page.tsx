@@ -25,6 +25,7 @@ import type {
 import type { Item } from "@/lib/types";
 import Toast from "@/components/admin/Toast";
 import { FormField, inputCls } from "@/components/admin/FormField";
+import Image from "next/image";
 
 // ── Add Requirement Modal ────────────────────────────────────────────────────
 function AddRequirementModal({
@@ -128,7 +129,9 @@ function AddRequirementModal({
                   }`}
               >
                 {item.image ? (
-                  <img
+                  <Image
+                    width={64}
+                    height={64}
                     src={item.image}
                     alt={item.name}
                     className="w-7 h-7 rounded object-cover shrink-0"
@@ -342,7 +345,9 @@ function LevelRow({
                           className="flex items-center gap-3 px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800"
                         >
                           {req.item_image ? (
-                            <img
+                            <Image
+                              width={64}
+                              height={64}
                               src={req.item_image}
                               alt={req.item_name}
                               className="w-7 h-7 rounded object-cover"
@@ -542,7 +547,9 @@ export default function SkillLevelsPage() {
                   ${selectedChar?.id === c.id ? "bg-yellow-300/10 text-yellow-300" : "text-zinc-400 hover:text-white hover:bg-zinc-800/60"}`}
               >
                 {c.icon ? (
-                  <img
+                  <Image
+                    width={64}
+                    height={64}
                     src={c.icon}
                     alt={c.name}
                     className="w-6 h-6 rounded object-cover shrink-0"

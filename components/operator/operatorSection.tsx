@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import VideoCanvas from "./videoCanvas";
 import CharInfoPanel from "./charInfoPanel";
 import ToggleSwitch from "./toggleSwitch";
+import Image from "next/image";
 
 export default function OperatorSection() {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -270,7 +271,9 @@ export default function OperatorSection() {
                 transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               >
                 {selectedChar.splash_art && !imgError ? (
-                  <img
+                  <Image
+                    width={1080}
+                    height={1080}
                     src={selectedChar.splash_art}
                     alt={selectedChar.name}
                     onError={() => setImgErrorId(selectedChar?.id ?? null)}
@@ -564,7 +567,9 @@ export default function OperatorSection() {
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
                 {selectedChar.splash_art && !imgError ? (
-                  <img
+                  <Image
+                    width={1080}
+                    height={1080}
                     src={selectedChar.splash_art}
                     alt={selectedChar.name}
                     onError={() => setImgErrorId(selectedChar?.id ?? null)}
@@ -732,7 +737,9 @@ export default function OperatorSection() {
           <div className="flex items-center justify-between px-4 pt-3 pb-1">
             <div className="flex items-center gap-2">
               {selectedChar?.class && (
-                <img
+                <Image
+                  width={720}
+                  height={720}
                   src={`/class/${selectedChar.class.toLowerCase()}.webp`}
                   alt={selectedChar.class}
                   style={{ width: "28px", height: "28px" }}
@@ -742,7 +749,9 @@ export default function OperatorSection() {
                 />
               )}
               {selectedChar?.element && (
-                <img
+                <Image
+                  width={720}
+                  height={720}
                   src={`/element/${selectedChar.element.toLowerCase()}.webp`}
                   alt={selectedChar.element}
                   style={{ width: "24px", height: "24px" }}

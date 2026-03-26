@@ -5,6 +5,7 @@ import { Search, X, Loader2, Sword } from "lucide-react";
 import type { Weapon } from "@/lib/types";
 import type { AddUserWeaponDTO } from "@/lib/types/ascension/userPlanner.types";
 import { weaponsApi } from "@/lib/api/ascension/weapon.api";
+import Image from "next/image";
 
 interface AddWeaponModalProps {
   existingIds: number[];
@@ -147,7 +148,9 @@ export default function AddWeaponModal({
               >
                 <div className="w-9 h-9 rounded-lg overflow-hidden bg-zinc-100 shrink-0 border border-zinc-200 flex items-center justify-center">
                   {w.icon ? (
-                    <img
+                    <Image
+                      width={128}
+                      height={128}
                       src={w.icon}
                       alt={w.name}
                       className="w-full h-full object-cover"
@@ -165,7 +168,9 @@ export default function AddWeaponModal({
                       className={`text-xs font-mono ${RARITY_COLOR[w.rarity] ?? "text-zinc-400"}`}
                     >
                       {Array.from({ length: w.rarity }).map((_, i) => (
-                        <img
+                        <Image
+                          width={16}
+                          height={16}
                           key={i}
                           src="/icon/star-icon.png"
                           alt="star"

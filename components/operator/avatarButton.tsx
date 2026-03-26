@@ -1,5 +1,6 @@
 import { Character } from "@/lib/types";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function AvatarButton({
   char,
@@ -47,7 +48,9 @@ export default function AvatarButton({
         }}
       >
         {char.icon ? (
-          <img
+          <Image
+            width={128}
+            height={128}
             src={char.icon}
             alt={char.name}
             className="w-full h-full object-cover"

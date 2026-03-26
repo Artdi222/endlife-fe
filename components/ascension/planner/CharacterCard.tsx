@@ -9,6 +9,7 @@ import type {
 } from "@/lib/types/ascension/userPlanner.types";
 import LevelRangeInput from "./LevelRangeInput";
 import SkillRows from "./SkillRows";
+import Image from "next/image";
 
 interface CharacterCardProps {
   character:      UserCharacterWithDetails;
@@ -76,7 +77,9 @@ export default function CharacterCard({
           {/* Icon */}
           <div className="w-12 h-12 rounded-xl overflow-hidden bg-zinc-100 shrink-0 border border-zinc-200">
             {character.character_icon ? (
-              <img
+              <Image
+                width={128}
+                height={128}
                 src={character.character_icon}
                 alt={character.character_name}
                 className="w-full h-full object-cover"
@@ -108,7 +111,9 @@ export default function CharacterCard({
               >
                 {Array.from({ length: character.character_rarity }).map(
                   (_, i) => (
-                    <img
+                    <Image
+                      width={16}
+                      height={16}
                       key={i}
                       src="/icon/star-icon.png"
                       alt="star"

@@ -1,5 +1,6 @@
 import { Character } from "@/lib/types";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 
 export default function CharInfoPanel({
   selectedChar,
@@ -38,7 +39,9 @@ export default function CharInfoPanel({
             style={{ gap: "8px", marginBottom: "10px" }}
           >
             {selectedChar.class && (
-              <img
+              <Image
+                width={32}
+                height={32}
                 src={`/class/${selectedChar.class.toLowerCase()}.webp`}
                 alt={selectedChar.class}
                 style={{
@@ -51,7 +54,9 @@ export default function CharInfoPanel({
               />
             )}
             {selectedChar.element && (
-              <img
+              <Image
+                width={32}
+                height={32}
                 src={`/element/${selectedChar.element.toLowerCase()}.webp`}
                 alt={selectedChar.element}
                 style={{

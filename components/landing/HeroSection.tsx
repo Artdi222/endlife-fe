@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, Variants, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { ArrowRight, Zap } from "lucide-react";
+import Image from "next/image";
 
 interface HeroSectionProps {
   isLoading: boolean;
@@ -95,7 +96,9 @@ export default function HeroSection({ isLoading }: HeroSectionProps) {
         animate={isLoading ? {} : { opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.6 }}
       >
-        <img
+        <Image
+          width={720}
+          height={720}
           src="/landing/ArknightsEndfield.webp"
           alt="Arknights Endfield"
           className="w-full h-full object-cover"

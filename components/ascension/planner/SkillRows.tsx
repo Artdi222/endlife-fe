@@ -4,6 +4,7 @@ import { Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { UserCharacterSkillWithDetails } from "@/lib/types/ascension/userPlanner.types";
 import { SKILL_MAX_LEVEL } from "./constants";
+import Image from "next/image";
 
 interface SkillRowsProps {
   skills: UserCharacterSkillWithDetails[];
@@ -70,7 +71,9 @@ function SkillRow({
       {/* Icon */}
       <div className="w-10 h-10 rounded flex items-center justify-center shrink-0 bg-black">
         {skill.skill_icon ? (
-          <img
+          <Image
+            width={128}
+            height={128}
             src={skill.skill_icon}
             alt=""
             className="w-8 h-8 object-cover rounded"

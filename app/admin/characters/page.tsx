@@ -20,6 +20,7 @@ import type {
 import DataTable from "@/components/admin/DataTable";
 import Toast from "@/components/admin/Toast";
 import { FormField, inputCls, selectCls } from "@/components/admin/FormField";
+import Image from "next/image";
 
 // ── Constants ────────────────────────────────────────────────
 const ELEMENTS = ["Heat", "Cryo", "Electric", "Physical", "Nature"];
@@ -532,7 +533,9 @@ export default function CharactersPage() {
       label: "Icon",
       render: (c: Character) =>
         c.icon ? (
-          <img
+          <Image
+            width={64}
+            height={64}
             src={c.icon}
             alt={c.name}
             className="w-9 h-9 rounded-lg object-cover border border-zinc-700"

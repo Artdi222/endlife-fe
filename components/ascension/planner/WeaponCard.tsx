@@ -7,6 +7,7 @@ import type {
   UpdateUserWeaponDTO,
 } from "@/lib/types/ascension/userPlanner.types";
 import LevelRangeInput from "./LevelRangeInput";
+import Image from "next/image";
 
 interface WeaponCardProps {
   weapon: UserWeaponWithDetails;
@@ -69,7 +70,9 @@ export default function WeaponCard({
         <div className="flex items-center gap-3 mb-3">
           <div className="w-12 h-12 rounded-xl overflow-hidden bg-zinc-100 shrink-0 border border-zinc-200 flex items-center justify-center">
             {weapon.weapon_icon ? (
-              <img
+              <Image
+                width={128}
+                height={128}
                 src={weapon.weapon_icon}
                 alt={weapon.weapon_name}
                 className="w-full h-full object-cover"
@@ -97,7 +100,9 @@ export default function WeaponCard({
               >
                 {Array.from({ length: weapon.weapon_rarity }).map(
                   (_, i) => (
-                    <img
+                    <Image
+                      width={16}
+                      height={16}
                       key={i}
                       src="/icon/star-icon.png"
                       alt="star"

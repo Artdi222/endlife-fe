@@ -18,6 +18,7 @@ import type { Skill, CreateSkillDTO, SkillType } from "@/lib/types";
 import DataTable from "@/components/admin/DataTable";
 import Toast from "@/components/admin/Toast";
 import { FormField, inputCls, selectCls } from "@/components/admin/FormField";
+import Image from "next/image";
 
 const SKILL_TYPES: { value: SkillType; label: string }[] = [
   { value: "skill", label: "Skill" },
@@ -193,7 +194,9 @@ function SkillModal({
               {/* Preview */}
               <div className="w-12 h-12 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0 overflow-hidden">
                 {iconPreview ? (
-                  <img
+                  <Image
+                    width={64}
+                    height={64}
                     src={iconPreview}
                     alt="icon preview"
                     className="w-full h-full object-cover"
@@ -327,7 +330,9 @@ export default function SkillsPage() {
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0 overflow-hidden">
             {s.icon ? (
-              <img
+              <Image
+                width={64}
+                height={64}
                 src={s.icon}
                 alt={s.name}
                 className="w-full h-full object-cover"
@@ -399,7 +404,9 @@ export default function SkillsPage() {
                   ${selectedChar?.id === c.id ? "bg-yellow-300/10 text-yellow-300" : "text-zinc-400 hover:text-white hover:bg-zinc-800/60"}`}
               >
                 {c.icon ? (
-                  <img
+                  <Image
+                    width={64}
+                    height={64}
                     src={c.icon}
                     alt={c.name}
                     className="w-7 h-7 rounded-lg object-cover shrink-0"

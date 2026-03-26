@@ -5,6 +5,7 @@ import { Search, X, Loader2, User } from "lucide-react";
 import type { Character } from "@/lib/types";
 import type { AddUserCharacterDTO } from "@/lib/types/ascension/userPlanner.types";
 import { charactersApi } from "@/lib/api/ascension/character.api";
+import Image from "next/image";
 
 interface AddCharacterModalProps {
   existingIds: number[];
@@ -148,7 +149,9 @@ export default function AddCharacterModal({
               >
                 <div className="w-9 h-9 rounded-lg overflow-hidden bg-zinc-100 shrink-0 border border-zinc-200">
                   {c.icon ? (
-                    <img
+                    <Image
+                      width={128}
+                      height={128}
                       src={c.icon}
                       alt={c.name}
                       className="w-full h-full object-cover"
@@ -169,7 +172,9 @@ export default function AddCharacterModal({
                     >
                       {Array.from({ length: c.rarity }).map(
                         (_, i) => (
-                          <img
+                          <Image
+                            width={16}
+                            height={16}
                             key={i}
                             src="/icon/star-icon.png"
                             alt="star"

@@ -1,13 +1,17 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useEffect,} from "react";
 import { motion } from "framer-motion";
 import { X, Package, Loader2, Search } from "lucide-react";
 import type { SummaryMaterial } from "@/lib/types/ascension/userPlanner.types";
+import type { Item } from "@/lib/types";
 import { MATERIAL_CATEGORY_ORDER } from "./constants";
 import Image from "next/image";
 
 interface InventoryModalProps {
-  materials: SummaryMaterial[]; // from summary — shows only what's needed
+  materials: SummaryMaterial[];
+  creditItem: Item | null;
+  creditOwned: number;
+  creditNeeded: number;
   onClose: () => void;
   onSave: (
     items: Array<{ item_id: number; quantity: number }>,
@@ -16,27 +20,36 @@ interface InventoryModalProps {
 
 export default function InventoryModal({
   materials,
+  creditItem,
+  creditOwned,
+  creditNeeded,
   onClose,
   onSave,
 }: InventoryModalProps) {
-  // Local quantities keyed by item_id — start with what user already has
   const [quantities, setQuantities] = useState<Record<number, number>>(() =>
     Object.fromEntries(materials.map((m) => [m.item_id, m.have])),
   );
+
+  const [localCreditOwned, setLocalCreditOwned] = useState(creditOwned)
   const [search, setSearch] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const set = useCallback((itemId: number, val: number) => {
-    setQuantities((p) => ({ ...p, [itemId]: Math.max(0, val) }));
-  }, []);
+
+  useEffect(() => setLocalCreditOwned(creditOwned), [creditOwned]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const items = Object.entries(quantities).map(([id, qty]) => ({
-        item_id: Number(id),
-        quantity: qty,
-      }));
+      const items: Array<{ item_id: number; quantity: number }> =
+        Object.entries(quantities).map(([id, qty]) => ({
+          item_id: Number(id),
+          quantity: qty,
+        }));
+      if (creditItem) {
+        const existing = items.findIndex((i) => i.item_id === creditItem.id);
+        if (existing >= 0) items[existing].quantity = localCreditOwned;
+        else items.push({ item_id: creditItem.id, quantity: localCreditOwned });
+      }
       await onSave(items);
       onClose();
     } finally {
@@ -44,18 +57,11 @@ export default function InventoryModal({
     }
   };
 
-  useCallback(() => {
-    const h = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", h);
-    return () => document.removeEventListener("keydown", h);
-  }, [onClose]);
-
-  // Group and filter
+  // Group non-currency materials
   const grouped = (() => {
     const map = new Map<string, SummaryMaterial[]>();
     for (const m of materials) {
+      if (m.category === "Currency") continue;
       if (search && !m.name.toLowerCase().includes(search.toLowerCase()))
         continue;
       const list = map.get(m.category) ?? [];
@@ -72,6 +78,42 @@ export default function InventoryModal({
     return ordered;
   })();
 
+  const Stepper = ({
+    value,
+    onChange,
+    done,
+  }: {
+    value: number;
+    onChange: (v: number) => void;
+    done: boolean;
+  }) => (
+    <div className="flex items-center gap-1 shrink-0">
+      <button
+        onClick={() => onChange(value - 1)}
+        className="w-6 h-6 rounded-lg bg-zinc-100 text-zinc-500 hover:bg-zinc-200 text-sm font-bold transition-colors flex items-center justify-center"
+      >
+        −
+      </button>
+      <input
+        type="number"
+        min={0}
+        value={value}
+        onChange={(e) => onChange(Math.max(0, Number(e.target.value)))}
+        className={`w-16 text-center text-xs font-mono border rounded-lg px-1 py-1 outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+          done
+            ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+            : "bg-zinc-50 border-zinc-200 text-zinc-800 focus:border-yellow-400"
+        }`}
+      />
+      <button
+        onClick={() => onChange(value + 1)}
+        className="w-6 h-6 rounded-lg bg-zinc-100 text-zinc-500 hover:bg-zinc-200 text-sm font-bold transition-colors flex items-center justify-center"
+      >
+        +
+      </button>
+    </div>
+  );
+
   return (
     <div
       className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
@@ -82,7 +124,7 @@ export default function InventoryModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 12 }}
         transition={{ duration: 0.18 }}
-        className="bg-white rounded-2xl w-full max-w-lg shadow-xl border border-zinc-200 overflow-hidden flex flex-col max-h-[80vh]"
+        className="bg-white rounded-2xl w-full max-w-lg shadow-xl border border-zinc-200 overflow-hidden flex flex-col max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -119,9 +161,48 @@ export default function InventoryModal({
           </div>
         </div>
 
-        {/* Material list */}
+        {/* Scrollable content */}
         <div className="overflow-y-auto flex-1 px-5 py-3">
-          {materials.length === 0 ? (
+          {creditItem && !search && (
+            <div className="mb-4">
+              <p className="text-[10px] font-mono uppercase tracking-[0.15em] text-zinc-400 mb-2 pb-1 border-b border-zinc-100">
+                Currency
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-zinc-100 shrink-0 overflow-hidden border border-zinc-200">
+                  {creditItem.image ? (
+                    <Image
+                      width={32}
+                      height={32}
+                      src={creditItem.image}
+                      alt={creditItem.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[10px] font-mono text-zinc-400">
+                      ₵
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-zinc-700 truncate">
+                    {creditItem.name}
+                  </p>
+                  <p className="text-[10px] font-mono text-zinc-400">
+                    Need: {creditNeeded.toLocaleString()}
+                  </p>
+                </div>
+                <Stepper
+                  value={localCreditOwned}
+                  onChange={setLocalCreditOwned}
+                  done={localCreditOwned >= creditNeeded}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* ── Other materials ── */}
+          {materials.filter((m) => m.category !== "Currency").length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
               <Package size={24} className="text-zinc-200 mb-2" />
               <p className="text-sm text-zinc-400">
@@ -165,33 +246,11 @@ export default function InventoryModal({
                             Need: {m.total_needed.toLocaleString()}
                           </p>
                         </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <button
-                            onClick={() => set(m.item_id, qty - 1)}
-                            className="w-6 h-6 rounded-lg bg-zinc-100 text-zinc-500 hover:bg-zinc-200 text-sm font-bold transition-colors flex items-center justify-center"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="number"
-                            min={0}
-                            value={qty}
-                            onChange={(e) =>
-                              set(m.item_id, Number(e.target.value))
-                            }
-                            className={`w-16 text-center text-xs font-mono border rounded-lg px-1 py-1 outline-none transition-colors ${
-                              done
-                                ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-                                : "bg-zinc-50 border-zinc-200 text-zinc-800 focus:border-yellow-400"
-                            }`}
-                          />
-                          <button
-                            onClick={() => set(m.item_id, qty + 1)}
-                            className="w-6 h-6 rounded-lg bg-zinc-100 text-zinc-500 hover:bg-zinc-200 text-sm font-bold transition-colors flex items-center justify-center"
-                          >
-                            +
-                          </button>
-                        </div>
+                        <Stepper
+                          value={qty}
+                          onChange={(v) => setQuantities(p => ({ ...p, [m.item_id]: v }))}
+                          done={done}
+                        />
                       </div>
                     );
                   })}

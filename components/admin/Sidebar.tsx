@@ -46,6 +46,7 @@ const navGroups: NavGroup[] = [
       { label: "Characters", href: "/admin/characters" },
       { label: "Weapons", href: "/admin/weapons" },
       { label: "Items", href: "/admin/items" },
+      { label: "News Banners", href: "/admin/news" },
     ],
   },
   {
@@ -64,9 +65,7 @@ const navGroups: NavGroup[] = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [open, setOpen] = useState<Record<string, boolean>>({
-    "Daily Master": true,
-  });
+  const [open, setOpen] = useState<Record<string, boolean>>({});
 
   const toggle = (label: string) =>
     setOpen((prev) => ({ ...prev, [label]: !prev[label] }));

@@ -18,8 +18,9 @@ export default function CharInfoPanel({
           key={`info-${selectedChar.id}-${compact}`}
           className="flex flex-col"
           style={{
-            maxWidth: compact ? "100%" : "380px",
-            maxHeight: compact ? "auto" : "44%",
+            maxWidth: compact ? "100%" : "100%",
+            maxHeight: compact ? "auto" : absolute ? "44%" : "100%",
+            height: absolute ? undefined : "100%",
             ...(absolute
               ? {
                   position: "absolute",
@@ -72,7 +73,7 @@ export default function CharInfoPanel({
               style={{
                 color: "#AAA",
                 fontWeight: 700,
-                fontSize: compact ? "18px" : "22px",
+                fontSize: compact ? "16px" : "clamp(18px, 3vw, 22px)",
                 lineHeight: 1,
               }}
             >
@@ -81,8 +82,8 @@ export default function CharInfoPanel({
             <span
               style={{
                 fontSize: compact
-                  ? "clamp(22px,6vw,32px)"
-                  : "clamp(30px,4vw,46px)",
+                  ? "clamp(20px, 6vw, 32px)"
+                  : "clamp(24px, 4vw, 46px)",
                 fontWeight: 900,
                 color: "#111",
                 letterSpacing: "-0.02em",
@@ -95,7 +96,7 @@ export default function CharInfoPanel({
               style={{
                 color: "#AAA",
                 fontWeight: 700,
-                fontSize: compact ? "18px" : "22px",
+                fontSize: compact ? "16px" : "clamp(18px, 3vw, 22px)",
                 lineHeight: 1,
               }}
             >
@@ -186,7 +187,7 @@ export default function CharInfoPanel({
                 minHeight: 0,
                 maxHeight: compact ? "72px" : undefined,
                 paddingRight: "4px",
-                scrollbarWidth: "none",
+                scrollbarWidth: absolute ? "none" : "thin",
                 msOverflowStyle: "none",
               }}
             >

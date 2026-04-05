@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
 import { userPlannerApi } from "@/lib/api/ascension/userPlanner.api";
+import { itemsApi } from "@/lib/api/ascension/item.api";
 import type {
   UserCharacterWithDetails,
   UserCharacterSkillWithDetails,
@@ -14,6 +15,7 @@ import type {
   AddUserCharacterDTO,
   AddUserWeaponDTO,
 } from "@/lib/types/ascension/userPlanner.types";
+import type { Item } from "@/lib/types";
 
 import PlannerHeader from "@/components/ascension/planner/PlannerHeader";
 import CharacterCard from "@/components/ascension/planner/CharacterCard";
@@ -28,7 +30,6 @@ type Modal = "add-character" | "add-weapon" | "inventory" | null;
 export default function PlannerPage() {
   const [characters, setCharacters] = useState<UserCharacterWithDetails[]>([]);
   const [weapons, setWeapons] = useState<UserWeaponWithDetails[]>([]);
-  // Skills keyed by user_character.id
   const [skillsMap, setSkillsMap] = useState<
     Record<number, UserCharacterSkillWithDetails[]>
   >({});
@@ -36,6 +37,10 @@ export default function PlannerPage() {
   const [loading, setLoading] = useState(true);
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [modal, setModal] = useState<Modal>(null);
+
+  const [creditItem, setCreditItem] = useState<Item | null>(null);
+  const [creditOwned, setCreditOwned] = useState(0);
+  const [creditItemId, setCreditItemId] = useState<number | null>(null);
 
   // ── Data fetching ──────────────────────────────────────────────────────────
 
@@ -54,7 +59,7 @@ export default function PlannerPage() {
       const res = await userPlannerApi.getCharacterSkills(userCharacterId);
       setSkillsMap((p) => ({ ...p, [userCharacterId]: res.data }));
     } catch {
-      // Skills are non-critical — fail silently
+      console.error(`Failed to load skills for user character ${userCharacterId}`);
     }
   }, []);
 
@@ -62,14 +67,26 @@ export default function PlannerPage() {
     const init = async () => {
       setLoading(true);
       try {
-        const [charRes, weapRes, sumRes] = await Promise.all([
+        const [charRes, weapRes, sumRes, itemsRes, invRes] = await Promise.all([
           userPlannerApi.getCharacters(),
           userPlannerApi.getWeapons(),
           userPlannerApi.getSummary(),
+          itemsApi.getAll(),
+          userPlannerApi.getInventory(),
         ]);
+
         setCharacters(charRes.data);
         setWeapons(weapRes.data);
         setSummary(sumRes.data);
+
+        const tCreds = itemsRes.data.find((i) => i.category === "Currency");
+        if (tCreds) {
+          setCreditItem(tCreds);
+          setCreditItemId(tCreds.id);
+          const invEntry = invRes.data.find((inv) => inv.item_id === tCreds.id);
+          setCreditOwned(invEntry?.quantity ?? 0);
+        }
+
         // Load skills for all characters
         await Promise.all(charRes.data.map((c) => loadSkills(c.id)));
       } finally {
@@ -79,12 +96,23 @@ export default function PlannerPage() {
     init();
   }, [loadSkills]);
 
+  const handleCreditChange = useCallback(
+    async (qty: number) => {
+      setCreditOwned(qty);
+      if (creditItemId == null) return;
+      try {
+        await userPlannerApi.setInventoryItem(creditItemId, { quantity: qty });
+      } catch {
+        console.error("Failed to update T-Creds quantity");
+      }
+    },
+    [creditItemId],
+  );
+
   // ── Character actions ──────────────────────────────────────────────────────
 
   const handleAddCharacter = async (dto: AddUserCharacterDTO) => {
     const res = await userPlannerApi.addCharacter(dto);
-    if (!res?.data)
-      throw new Error("Failed to add character — no data returned");
     setCharacters((p) => [...p, res.data]);
     await loadSkills(res.data.id);
     await refreshSummary();
@@ -95,7 +123,6 @@ export default function PlannerPage() {
     dto: UpdateUserCharacterDTO,
   ) => {
     const res = await userPlannerApi.updateCharacter(id, dto);
-    if (!res?.data) return;
     setCharacters((p) => p.map((c) => (c.id === id ? res.data : c)));
     await refreshSummary();
   };
@@ -121,7 +148,6 @@ export default function PlannerPage() {
       current_level: current,
       target_level: target,
     });
-    if (!res?.data) return;
     setSkillsMap((p) => ({
       ...p,
       [userCharId]: (p[userCharId] ?? []).map((s) =>
@@ -141,14 +167,12 @@ export default function PlannerPage() {
 
   const handleAddWeapon = async (dto: AddUserWeaponDTO) => {
     const res = await userPlannerApi.addWeapon(dto);
-    if (!res?.data) throw new Error("Failed to add weapon — no data returned");
     setWeapons((p) => [...p, res.data]);
     await refreshSummary();
   };
 
   const handleUpdateWeapon = async (id: number, dto: UpdateUserWeaponDTO) => {
     const res = await userPlannerApi.updateWeapon(id, dto);
-    if (!res?.data) return;
     setWeapons((p) => p.map((w) => (w.id === id ? res.data : w)));
     await refreshSummary();
   };
@@ -165,6 +189,11 @@ export default function PlannerPage() {
     items: Array<{ item_id: number; quantity: number }>,
   ) => {
     await userPlannerApi.bulkSetInventory({ items });
+    // Sync T-Creds owned if it was in the bulk save
+    if (creditItemId != null) {
+      const entry = items.find((i) => i.item_id === creditItemId);
+      if (entry) setCreditOwned(entry.quantity);
+    }
     await refreshSummary();
   };
 
@@ -205,7 +234,6 @@ export default function PlannerPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col items-center justify-center py-24 text-center"
               >
-                {/* Endfield-style empty state */}
                 <div
                   className="w-20 h-20 rounded-2xl border-2 border-dashed border-zinc-200 flex items-center justify-center mb-4"
                   style={{
@@ -233,7 +261,6 @@ export default function PlannerPage() {
               </motion.div>
             ) : (
               <div className="flex flex-col gap-3 pb-6">
-                {/* Characters */}
                 <AnimatePresence mode="popLayout">
                   {characters.map((c, i) => (
                     <CharacterCard
@@ -250,7 +277,6 @@ export default function PlannerPage() {
                   ))}
                 </AnimatePresence>
 
-                {/* Weapons — subtle separator if both exist */}
                 {characters.length > 0 && weapons.length > 0 && (
                   <div className="flex items-center gap-3 my-1">
                     <div className="flex-1 h-px bg-zinc-100" />
@@ -283,6 +309,9 @@ export default function PlannerPage() {
             <SummaryPanel
               summary={summary}
               loading={summaryLoading}
+              creditItem={creditItem}
+              creditOwned={creditOwned}
+              onCreditChange={handleCreditChange}
               onEditInventory={() => setModal("inventory")}
             />
           </div>
@@ -311,6 +340,9 @@ export default function PlannerPage() {
           <InventoryModal
             key="inventory"
             materials={summary?.materials ?? []}
+            creditItem={creditItem}
+            creditOwned={creditOwned}
+            creditNeeded={summary ? Number(summary.total_credits_needed) : 0}
             onClose={() => setModal(null)}
             onSave={handleSaveInventory}
           />

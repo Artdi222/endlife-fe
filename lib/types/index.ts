@@ -17,3 +17,6 @@ export * from "./ascension/character.types";
 export * from "./ascension/weapon.types";
 export * from "./ascension/item.types";
 export * from "./ascension/userPlanner.types";
+
+// news
+export * from "./newsBanner.types";

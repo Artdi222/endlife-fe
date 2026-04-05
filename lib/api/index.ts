@@ -20,3 +20,5 @@ export * from "./ascension/weapon.api";
 export * from "./ascension/item.api";
 export * from "./ascension/userPlanner.api";
 
+// news
+export * from "./newsBanner.api";

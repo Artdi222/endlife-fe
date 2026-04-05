@@ -274,9 +274,9 @@ export default function VideoCanvas({
         right: 0,
         top: 0,
         margin: "auto",
+        width: "100%",
         height: "100%",
-        width: "auto",
-        maxWidth: "100%",
+        objectFit: "contain",
         pointerEvents: "none",
         background: "transparent",
       }}

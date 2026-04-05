@@ -2,19 +2,23 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboard,
+  Home,
   CalendarCheck,
   ArrowLeftCircle,
   Menu,
   X,
   TrendingUp,
+  Users,
+  Sword,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { authApi } from "@/lib/api/auth.api";
 
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Home", href: "/dashboard", icon: Home },
+  { label: "Characters", href: "/dashboard/characters", icon: Users },
+  { label: "Weapons", href: "/dashboard/weapons", icon: Sword },
   { label: "Daily", href: "/dashboard/daily", icon: CalendarCheck },
   { label: "Planner", href: "/dashboard/planner", icon: TrendingUp },
 ];

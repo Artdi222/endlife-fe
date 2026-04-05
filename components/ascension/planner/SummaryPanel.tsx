@@ -6,12 +6,16 @@ import type {
   PlannerSummary,
   SummaryMaterial,
 } from "@/lib/types/ascension/userPlanner.types";
+import type { Item } from "@/lib/types";
 import { MATERIAL_CATEGORY_ORDER } from "./constants";
 import Image from "next/image";
 
 interface SummaryPanelProps {
   summary: PlannerSummary | null;
   loading: boolean;
+  creditItem: Item | null;
+  creditOwned: number;
+  onCreditChange: (qty: number) => void;
   onEditInventory: () => void;
 }
 
@@ -26,12 +30,11 @@ function MaterialRow({ mat }: { mat: SummaryMaterial }) {
     <div
       className={`flex items-center gap-2.5 py-2 border-b border-zinc-50 last:border-0 ${done ? "opacity-50" : ""}`}
     >
-      {/* Item icon */}
       <div className="w-7 h-7 rounded-lg bg-zinc-100 shrink-0 overflow-hidden border border-zinc-200">
         {mat.image ? (
           <Image
-            width={128}
-            height={128}
+            width={28}
+            height={28}
             src={mat.image}
             alt={mat.name}
             className="w-full h-full object-cover"
@@ -42,8 +45,6 @@ function MaterialRow({ mat }: { mat: SummaryMaterial }) {
           </div>
         )}
       </div>
-
-      {/* Name + progress bar */}
       <div className="flex-1 min-w-0">
         <p className="text-xs font-semibold text-zinc-700 truncate">
           {mat.name}
@@ -57,8 +58,6 @@ function MaterialRow({ mat }: { mat: SummaryMaterial }) {
           />
         </div>
       </div>
-
-      {/* Have / Need */}
       <div className="text-right shrink-0">
         <span
           className={`text-xs font-mono ${done ? "text-emerald-500" : mat.have > 0 ? "text-yellow-600" : "text-zinc-400"}`}
@@ -104,7 +103,6 @@ function CategorySection({
           <ChevronDown size={11} className="text-zinc-300" />
         )}
       </button>
-
       <AnimatePresence>
         {open && (
           <motion.div
@@ -124,21 +122,89 @@ function CategorySection({
   );
 }
 
+function CreditRow({
+  creditItem,
+  owned,
+  needed,
+}: {
+  creditItem: Item | null;
+  owned: number;
+  needed: number;
+  onChange: (qty: number) => void;
+}) {
+  const remaining = Math.max(0, needed - owned);
+  const pct = needed > 0 ? Math.min(100, (owned / needed) * 100) : 100;
+  const done = remaining === 0;
+
+  return (
+    <div
+      className={`flex items-center gap-2.5 py-2 ${done ? "opacity-60" : ""}`}
+    >
+      {/* T-Creds icon */}
+      <div className="w-7 h-7 rounded-lg bg-zinc-100 shrink-0 overflow-hidden border border-zinc-200">
+        {creditItem?.image ? (
+          <Image
+            width={28}
+            height={28}
+            src={creditItem.image}
+            alt={creditItem.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-[9px] font-mono text-zinc-400">
+            ₵
+          </div>
+        )}
+      </div>
+
+      {/* Name + progress */}
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-semibold text-zinc-700 truncate">
+          {creditItem?.name ?? "T-Creds"}
+        </p>
+        <div className="h-1 mt-1 rounded-full bg-zinc-100 overflow-hidden">
+          <motion.div
+            className={`h-full rounded-full ${done ? "bg-emerald-400" : "bg-yellow-400"}`}
+            initial={{ width: 0 }}
+            animate={{ width: `${pct}%` }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          />
+        </div>
+      </div>
+
+      {/* Inline "have" / need */}
+      <div className="flex items-center gap-1 shrink-0">
+        <span className="text-xs font-mono text-zinc-600 font-semibold">
+          {owned.toLocaleString()}
+        </span>
+        <span className="text-xs font-mono text-zinc-300">/</span>
+        <span className="text-xs font-mono text-zinc-600 font-semibold">
+          {needed.toLocaleString()}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function SummaryPanel({
   summary,
   loading,
+  creditItem,
+  creditOwned,
+  onCreditChange,
   onEditInventory,
 }: SummaryPanelProps) {
-  // Group materials by category in display order
+  // Group non-currency materials by category
   const grouped = (() => {
     if (!summary) return [];
     const map = new Map<string, SummaryMaterial[]>();
     for (const m of summary.materials) {
+      // Currency items are rendered via CreditRow, skip them here
+      if (m.category === "Currency") continue;
       const list = map.get(m.category) ?? [];
       list.push(m);
       map.set(m.category, list);
     }
-    // Sort by defined order, then any remaining categories
     const ordered: Array<[string, SummaryMaterial[]]> = [];
     for (const cat of MATERIAL_CATEGORY_ORDER) {
       if (map.has(cat)) ordered.push([cat, map.get(cat)!]);
@@ -149,12 +215,16 @@ export default function SummaryPanel({
     return ordered;
   })();
 
+  const totalCreditsNeeded = Number(summary?.total_credits_needed ?? 0);
   const totalRemaining =
-    summary?.materials.reduce((s, m) => s + m.remaining, 0) ?? 0;
+    summary?.materials
+      .filter((m) => m.category !== "Currency")
+      .reduce((s, m) => s + m.remaining, 0) ?? 0;
+  const creditsRemaining = Math.max(0, totalCreditsNeeded - creditOwned);
 
   return (
     <div className="flex flex-col h-full">
-      {/* Panel header */}
+      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-400 mb-0.5">
@@ -172,31 +242,25 @@ export default function SummaryPanel({
         </motion.button>
       </div>
 
-      {/* Credits + EXP totals */}
+      {/* Costs section — T-Creds*/}
       {summary && (
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          {[
-            {
-              label: "Credits",
-              value: Number(summary.total_credits_needed).toLocaleString(),
-            },
-            {
-              label: "EXP",
-              value: Number(summary.total_exp_needed).toLocaleString(),
-            },
-          ].map(({ label, value }) => (
-            <div
-              key={label}
-              className="bg-zinc-50 border border-zinc-100 rounded-xl p-3"
-            >
-              <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-1">
-                {label}
-              </p>
-              <p className="text-sm font-black text-zinc-900 font-mono">
-                {value}
-              </p>
-            </div>
-          ))}
+        <div className="mb-4 border border-zinc-100 rounded-xl overflow-hidden">
+          {/* Section label */}
+          <div className="px-3 py-1.5 bg-zinc-50 border-b border-zinc-100">
+            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-zinc-400">
+              Costs
+            </span>
+          </div>
+
+          <div className="px-3">
+            {/* T-Creds — editable inline */}
+            <CreditRow
+              creditItem={creditItem}
+              owned={creditOwned}
+              needed={totalCreditsNeeded}
+              onChange={onCreditChange}
+            />
+          </div>
         </div>
       )}
 
@@ -205,11 +269,11 @@ export default function SummaryPanel({
         <div className="flex items-center gap-2 mb-3">
           <div className="flex-1 h-px bg-zinc-100" />
           <span
-            className={`text-[10px] font-mono ${totalRemaining === 0 ? "text-emerald-500" : "text-zinc-400"}`}
+            className={`text-[10px] font-mono ${totalRemaining === 0 && creditsRemaining === 0 ? "text-emerald-500" : "text-zinc-400"}`}
           >
-            {totalRemaining === 0
-              ? "ALL MATERIALS READY"
-              : `${totalRemaining.toLocaleString()} items needed`}
+            {totalRemaining === 0 && creditsRemaining === 0
+              ? "ALL READY"
+              : `${(totalRemaining + (creditsRemaining > 0 ? 1 : 0)).toLocaleString()} pending`}
           </span>
           <div className="flex-1 h-px bg-zinc-100" />
         </div>
@@ -221,7 +285,9 @@ export default function SummaryPanel({
           <div className="flex items-center justify-center py-12">
             <Loader2 size={20} className="animate-spin text-zinc-300" />
           </div>
-        ) : !summary || summary.materials.length === 0 ? (
+        ) : !summary ||
+          summary.materials.filter((m) => m.category !== "Currency").length ===
+            0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <Package size={28} className="text-zinc-200 mb-3" />
             <p className="text-sm font-semibold text-zinc-300">

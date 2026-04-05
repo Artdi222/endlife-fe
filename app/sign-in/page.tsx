@@ -52,8 +52,6 @@ export default function SignInPage() {
     setLoading(true);
     try {
       const res = await authApi.login({ email, password });
-      localStorage.setItem("admin_token", res.token);
-      localStorage.setItem("admin_role", res.user.role);
       if (res.user.role === "admin") {
         router.push("/admin");
       } else {

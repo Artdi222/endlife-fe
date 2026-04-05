@@ -64,7 +64,7 @@ function SkillRow({
   };
 
   const selectCls =
-    "bg-zinc-50 border border-zinc-200 rounded-md px-1 py-0.5 text-xs font-mono text-zinc-800 outline-none focus:border-yellow-400 transition-colors cursor-pointer";
+    "bg-zinc-50 border border-zinc-200 rounded-md pl-1.5 pr-5 py-0.5 text-xs font-mono text-zinc-800 outline-none focus:border-yellow-400 transition-colors cursor-pointer appearance-none text-center min-w-[36px]";
 
   return (
     <div className="flex items-center gap-2 py-1.5 border-b border-zinc-50 last:border-0">
@@ -103,34 +103,48 @@ function SkillRow({
       {/* Level selects — show current max options for this skill type */}
       <div className="flex items-center gap-1 shrink-0">
         {/* Current level select */}
-        <select
-          value={current}
-          onChange={(e) => handleChange(Number(e.target.value), target)}
-          className={selectCls}
-        >
-          {options.map((lvl) => (
-            <option key={lvl} value={lvl}>
-              {lvl}
-            </option>
-          ))}
-        </select>
-
-        <span className="text-zinc-800 text-l">→</span>
-
-        {/* Target level select — only options >= current */}
-        <select
-          value={target}
-          onChange={(e) => handleChange(current, Number(e.target.value))}
-          className={selectCls}
-        >
-          {options
-            .filter((lvl) => lvl >= current)
-            .map((lvl) => (
+        <div className="relative flex items-center">
+          <select
+            value={current}
+            onChange={(e) => handleChange(Number(e.target.value), target)}
+            className={selectCls}
+          >
+            {options.map((lvl) => (
               <option key={lvl} value={lvl}>
                 {lvl}
               </option>
             ))}
-        </select>
+          </select>
+          <ChevronDown
+            size={12}
+            strokeWidth={3}
+            className="absolute right-1 text-zinc-400 pointer-events-none"
+          />
+        </div>
+
+        <span className="text-zinc-800 text-l">→</span>
+
+        {/* Target level select — only options >= current */}
+        <div className="relative flex items-center">
+          <select
+            value={target}
+            onChange={(e) => handleChange(current, Number(e.target.value))}
+            className={selectCls}
+          >
+            {options
+              .filter((lvl) => lvl >= current)
+              .map((lvl) => (
+                <option key={lvl} value={lvl}>
+                  {lvl}
+                </option>
+              ))}
+          </select>
+          <ChevronDown
+            size={12}
+            strokeWidth={3}
+            className="absolute right-1 text-zinc-400 pointer-events-none"
+          />
+        </div>
 
         {saving && (
           <Loader2

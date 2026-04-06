@@ -18,14 +18,14 @@ export default function CharInfoPanel({
           key={`info-${selectedChar.id}-${compact}`}
           className="flex flex-col"
           style={{
-            maxWidth: compact ? "100%" : "100%",
-            maxHeight: compact ? "auto" : absolute ? "44%" : "100%",
+            maxWidth: compact ? "100%" : absolute ? "380px" : "100%",
+            maxHeight: compact ? "auto" : absolute ? "38%" : "100%",
             height: absolute ? undefined : "100%",
             ...(absolute
               ? {
                   position: "absolute",
-                  bottom: "36px",
-                  left: "28px",
+                  bottom: "48px",
+                  left: "48px",
                   zIndex: 20,
                 }
               : {}),

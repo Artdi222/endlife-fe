@@ -10,27 +10,27 @@ const BASE = "/skills";
 
 export const skillApi = {
   getForCharacter: (characterId: number) =>
-    request<{ data: SkillWithLevels[] }>(`${BASE}?character_id=${characterId}`),
+    request<SkillWithLevels[]>(`${BASE}?character_id=${characterId}`),
 
-  getById: (id: number) => request<{ data: SkillWithLevels }>(`${BASE}/${id}`),
+  getById: (id: number) => request<SkillWithLevels>(`${BASE}/${id}`),
 
   create: (body: CreateSkillDTO) =>
-    request<{ data: Skill }>(BASE, {
+    request<Skill>(BASE, {
       method: "POST",
       body: JSON.stringify(body),
     }),
 
   update: (id: number, body: UpdateSkillDTO) =>
-    request<{ data: Skill }>(`${BASE}/${id}`, {
+    request<Skill>(`${BASE}/${id}`, {
       method: "PATCH",
       body: JSON.stringify(body),
     }),
 
   delete: (id: number) =>
-    request<{ data: null }>(`${BASE}/${id}`, { method: "DELETE" }),
+    request<null>(`${BASE}/${id}`, { method: "DELETE" }),
 
   uploadIcon: (id: number, formData: FormData) =>
-    request<{ data: Skill }>(`${BASE}/${id}/icon`, {
+    request<Skill>(`${BASE}/${id}/icon`, {
       method: "POST",
       body: formData,
     }),

@@ -9,12 +9,12 @@ const BASE = "/ascension/stages";
 
 export const stageApi = {
   getForEntity: (entityType: "character" | "weapon", entityId: number) =>
-    request<{ data: AscensionStageWithRequirements[] }>(
+    request<AscensionStageWithRequirements[]>(
       `${BASE}?entity_type=${entityType}&entity_id=${entityId}`,
     ),
 
   getById: (id: number) =>
-    request<{ data: AscensionStageWithRequirements }>(`${BASE}/${id}`),
+    request<AscensionStageWithRequirements>(`${BASE}/${id}`),
 
   // UPDATED: was /ascension/level-to-stage, now /ascension/stages/level-to-stage
   levelToStage: (
@@ -22,22 +22,22 @@ export const stageApi = {
     entityId: number,
     level: number,
   ) =>
-    request<{ data: { stage_number: number } }>(
+    request<{ stage_number: number }>(
       `${BASE}/level-to-stage?entity_type=${entityType}&entity_id=${entityId}&level=${level}`,
     ),
 
   create: (body: CreateAscensionStageDTO) =>
-    request<{ data: AscensionStageWithRequirements }>(BASE, {
+    request<AscensionStageWithRequirements>(BASE, {
       method: "POST",
       body: JSON.stringify(body),
     }),
 
   update: (id: number, body: UpdateAscensionStageDTO) =>
-    request<{ data: AscensionStageWithRequirements }>(`${BASE}/${id}`, {
+    request<AscensionStageWithRequirements>(`${BASE}/${id}`, {
       method: "PATCH",
       body: JSON.stringify(body),
     }),
 
   delete: (id: number) =>
-    request<{ data: null }>(`${BASE}/${id}`, { method: "DELETE" }),
+    request<null>(`${BASE}/${id}`, { method: "DELETE" }),
 };

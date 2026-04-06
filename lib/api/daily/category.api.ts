@@ -2,20 +2,20 @@ import { request } from "../base";
 import type { Category } from "../../types";
 
 export const categoriesApi = {
-  getAll: () => request<{ data: Category[] }>("/categories"),
+  getAll: () => request<Category[]>("/categories"),
 
   create: (body: Omit<Category, "id">) =>
-    request<{ data: Category }>("/categories", {
+    request<Category>("/categories", {
       method: "POST",
       body: JSON.stringify(body),
     }),
 
   update: (id: number, body: Omit<Category, "id">) =>
-    request<{ data: Category }>(`/categories/${id}`, {
-      method: "PUT",
+    request<Category>(`/categories/${id}`, {
+      method: "PATCH", // Backend refactored to use PATCH for updates
       body: JSON.stringify(body),
     }),
 
   delete: (id: number) =>
-    request<{ data: Category }>(`/categories/${id}`, { method: "DELETE" }),
+    request<Category>(`/categories/${id}`, { method: "DELETE" }),
 };

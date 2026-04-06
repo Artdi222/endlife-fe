@@ -6,32 +6,33 @@ import type {
   BulkUpsertRequirementsDTO,
 } from "../../types";
 
-const BASE = "/ascension/requirements";
+const BASE = "/requirements";
 
 export const requirementApi = {
+  // Matching backend: GET /requirements?stage_id=XXX
   getForStage: (stageId: number) =>
-    request<{ data: AscensionRequirement[] }>(`${BASE}?stage_id=${stageId}`),
+    request<AscensionRequirement[]>(`${BASE}?stage_id=${stageId}`),
 
   getById: (id: number) =>
-    request<{ data: AscensionRequirement }>(`${BASE}/${id}`),
+    request<AscensionRequirement>(`${BASE}/${id}`),
 
   upsert: (body: CreateAscensionRequirementDTO) =>
-    request<{ data: AscensionRequirement }>(BASE, {
-      method: "POST",
+    request<AscensionRequirement>(BASE, {
+      method: "PUT", // Updated to match backend .put("/")
       body: JSON.stringify(body),
     }),
 
   update: (id: number, body: UpdateAscensionRequirementDTO) =>
-    request<{ data: AscensionRequirement }>(`${BASE}/${id}`, {
+    request<AscensionRequirement>(`${BASE}/${id}`, {
       method: "PATCH",
       body: JSON.stringify(body),
     }),
 
   delete: (id: number) =>
-    request<{ data: null }>(`${BASE}/${id}`, { method: "DELETE" }),
+    request<null>(`${BASE}/${id}`, { method: "DELETE" }),
 
   bulk: (body: BulkUpsertRequirementsDTO) =>
-    request<{ data: AscensionRequirement[] }>(`${BASE}/bulk`, {
+    request<AscensionRequirement[]>(`${BASE}/bulk`, {
       method: "POST",
       body: JSON.stringify(body),
     }),

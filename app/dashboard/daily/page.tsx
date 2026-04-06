@@ -291,7 +291,7 @@ export default function DailyPage() {
   }
 
   return (
-    <div className="w-full p-4">
+    <div className="w-full p-10">
       {/* Page header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}

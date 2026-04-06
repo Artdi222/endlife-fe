@@ -20,29 +20,29 @@ export const userPlannerApi = {
   // CHARACTERS
   // GET /user-planner/characters
   getCharacters: () =>
-    request<{ data: UserCharacterWithDetails[] }>(`${BASE}/characters`),
+    request<UserCharacterWithDetails[]>(`${BASE}/characters`),
 
   // GET /user-planner/characters/:id
   getCharacterById: (id: number) =>
-    request<{ data: UserCharacterWithDetails }>(`${BASE}/characters/${id}`),
+    request<UserCharacterWithDetails>(`${BASE}/characters/${id}`),
 
   // POST /user-planner/characters
   addCharacter: (body: AddUserCharacterDTO) =>
-    request<{ data: UserCharacterWithDetails }>(`${BASE}/characters`, {
+    request<UserCharacterWithDetails>(`${BASE}/characters`, {
       method: "POST",
       body: JSON.stringify(body),
     }),
 
   // PATCH /user-planner/characters/:id
   updateCharacter: (id: number, body: UpdateUserCharacterDTO) =>
-    request<{ data: UserCharacterWithDetails }>(`${BASE}/characters/${id}`, {
+    request<UserCharacterWithDetails>(`${BASE}/characters/${id}`, {
       method: "PATCH",
       body: JSON.stringify(body),
     }),
 
   // DELETE /user-planner/characters/:id
   removeCharacter: (id: number) =>
-    request<{ data: null }>(`${BASE}/characters/${id}`, {
+    request<null>(`${BASE}/characters/${id}`, {
       method: "DELETE",
     }),
 
@@ -50,7 +50,7 @@ export const userPlannerApi = {
 
   // GET /user-planner/characters/:id/skills
   getCharacterSkills: (userCharacterId: number) =>
-    request<{ data: UserCharacterSkillWithDetails[] }>(
+    request<UserCharacterSkillWithDetails[]>(
       `${BASE}/characters/${userCharacterId}/skills`,
     ),
 
@@ -59,7 +59,7 @@ export const userPlannerApi = {
     userCharacterSkillId: number,
     body: UpdateUserCharacterSkillDTO,
   ) =>
-    request<{ data: UserCharacterSkillWithDetails }>(
+    request<UserCharacterSkillWithDetails>(
       `${BASE}/skills/${userCharacterSkillId}`,
       {
         method: "PATCH",
@@ -71,64 +71,62 @@ export const userPlannerApi = {
 
   // GET /user-planner/weapons
   getWeapons: () =>
-    request<{ data: UserWeaponWithDetails[] }>(`${BASE}/weapons`),
+    request<UserWeaponWithDetails[]>(`${BASE}/weapons`),
 
   // GET /user-planner/weapons/:id
   getWeaponById: (id: number) =>
-    request<{ data: UserWeaponWithDetails }>(`${BASE}/weapons/${id}`),
+    request<UserWeaponWithDetails>(`${BASE}/weapons/${id}`),
 
   // POST /user-planner/weapons
   addWeapon: (body: AddUserWeaponDTO) =>
-    request<{ data: UserWeaponWithDetails }>(`${BASE}/weapons`, {
+    request<UserWeaponWithDetails>(`${BASE}/weapons`, {
       method: "POST",
       body: JSON.stringify(body),
     }),
 
   // PATCH /user-planner/weapons/:id
   updateWeapon: (id: number, body: UpdateUserWeaponDTO) =>
-    request<{ data: UserWeaponWithDetails }>(`${BASE}/weapons/${id}`, {
+    request<UserWeaponWithDetails>(`${BASE}/weapons/${id}`, {
       method: "PATCH",
       body: JSON.stringify(body),
     }),
 
   // DELETE /user-planner/weapons/:id
   removeWeapon: (id: number) =>
-    request<{ data: null }>(`${BASE}/weapons/${id}`, {
+    request<null>(`${BASE}/weapons/${id}`, {
       method: "DELETE",
     }),
 
   // INVENTORY
   // GET /user-planner/inventory
   getInventory: () =>
-    request<{ data: UserInventoryItem[] }>(`${BASE}/inventory`),
+    request<UserInventoryItem[]>(`${BASE}/inventory`),
 
   // GET /user-planner/inventory/:item_id
   getInventoryItem: (itemId: number) =>
-    request<{ data: UserInventoryItem }>(`${BASE}/inventory/${itemId}`),
+    request<UserInventoryItem>(`${BASE}/inventory/${itemId}`),
 
   // PUT /user-planner/inventory/:item_id
   setInventoryItem: (itemId: number, body: UpsertInventoryItemDTO) =>
-    request<{ data: UserInventoryItem }>(`${BASE}/inventory/${itemId}`, {
+    request<UserInventoryItem>(`${BASE}/inventory/${itemId}`, {
       method: "PUT",
       body: JSON.stringify(body),
     }),
 
   // POST /user-planner/inventory/bulk
   bulkSetInventory: (body: BulkUpsertInventoryDTO) =>
-    request<{ data: UserInventoryItem[] }>(`${BASE}/inventory/bulk`, {
+    request<UserInventoryItem[]>(`${BASE}/inventory/bulk`, {
       method: "POST",
       body: JSON.stringify(body),
     }),
 
   // DELETE /user-planner/inventory/:item_id
   removeInventoryItem: (itemId: number) =>
-    request<{ data: null }>(`${BASE}/inventory/${itemId}`, {
+    request<null>(`${BASE}/inventory/${itemId}`, {
       method: "DELETE",
     }),
 
   // SUMMARY
   // GET /user-planner/summary
-  // Returns aggregated materials needed, total credits and EXP across all planned
-  // characters, weapons, and skills — with inventory quantities already subtracted.
-  getSummary: () => request<{ data: PlannerSummary }>(`${BASE}/summary`),
+  getSummary: () => request<PlannerSummary>(`${BASE}/summary`),
 }

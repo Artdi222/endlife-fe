@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Routes that need a valid auth_token cookie
-const PROTECTED_PREFIXES = ["/dashboard", "/admin"];
+// We now exclude /dashboard/characters and /dashboard/weapons to allow public access
+const PROTECTED_PREFIXES = ["/dashboard/planner", "/admin"];
 
 // Routes only guests should see (redirect logged-in users away)
 const GUEST_ONLY = ["/sign-in", "/sign-up", "/login"];
@@ -13,8 +14,11 @@ export function middleware(request: NextRequest) {
   const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
   const isGuestOnly = GUEST_ONLY.some((p) => pathname.startsWith(p));
 
-  // Not logged in → redirect to sign-in
-  if (isProtected && !token) {
+  // Special cases for /dashboard:
+  // If the path is exactly /dashboard, we want to protect it
+  const isDashboardRoot = pathname === "/dashboard";
+  
+  if ((isProtected || isDashboardRoot) && !token) {
     const url = request.nextUrl.clone();
     url.pathname = "/sign-in";
     url.searchParams.set("from", pathname); // preserve intended destination

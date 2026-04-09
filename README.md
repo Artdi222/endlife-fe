@@ -6,7 +6,7 @@
 
 ## 📖 Overview
 
-EndLife is a fan-made, comprehensive companion application designed for the upcoming title *Arknights: Endfield*. Built with modern web technologies and a focus on premium aesthetics, the application serves as a central hub for tracking game progression, managing resources, and exploring game encyclopedias.
+EndLife is a fan-made, comprehensive companion application designed for the game *Arknights: Endfield*. Built with modern web technologies and a focus on premium aesthetics, the application serves as a central hub for tracking game progression, managing resources, and exploring game encyclopedias.
 
 This repository holds the **Frontend** of the EndLife application.
 
@@ -28,7 +28,7 @@ The frontend is built with the latest and greatest in the React ecosystem:
 - **Animations:** [Framer Motion](https://www.framer.com/motion/) for smooth layout transitions and micro-animations
 - **State Management:** [Zustand](https://zustand-demo.pmnd.rs/) for lightweight, global application state
 - **Icons:** [Lucide React](https://lucide.dev/)
-- **API Client:** [@elysiajs/eden](https://elysiajs.com/plugins/eden/overview.html) for end-to-end type safety with the ElysiaJS backend.
+- **API Client:** Standard Fetch API with a robust custom wrapper for standardized request/response cycling and TypeScript interface synchronization.
 
 ## 🚀 Getting Started
 
@@ -85,7 +85,7 @@ endlife-fe/
 │   └── layout.tsx        # Root application layout
 ├── components/           # Reusable UI components (Cards, Modals, Inputs, etc.)
 ├── lib/                  # Utility functions and API configuration
-│   └── api/              # Eden API client setup (auth, fetching)
+│   └── api/              # Standardized API requests and endpoint definitions
 ├── store/                # Zustand global state stores
 ├── public/               # Static assets (images, icons)
 ├── package.json          # Project dependencies and scripts

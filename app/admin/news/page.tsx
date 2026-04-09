@@ -24,6 +24,7 @@ import { FormField, inputCls, selectCls } from "@/components/admin/FormField";
 // ── Empty form ──────────────────────────────────────────────
 const emptyForm: CreateNewsBannerDTO = {
   title: "",
+  type: "news",
   content: "",
   order_index: 0,
   is_active: true,
@@ -45,6 +46,7 @@ function BannerModal({
     initial
       ? {
           title: initial.title,
+          type: initial.type ?? "news",
           content: initial.content ?? "",
           order_index: initial.order_index,
           is_active: initial.is_active,
@@ -131,14 +133,30 @@ function BannerModal({
 
         <div className="p-6 flex flex-col gap-4">
           {/* Title */}
-          <FormField label="Title">
-            <input
-              className={inputCls}
-              placeholder="e.g. Version 1.2 Update"
-              value={form.title}
-              onChange={(e) => set("title", e.target.value)}
-            />
-          </FormField>
+          {/* Title and Type */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="col-span-2">
+              <FormField label="Title">
+                <input
+                  className={inputCls}
+                  placeholder="e.g. Version 1.2 Update"
+                  value={form.title}
+                  onChange={(e) => set("title", e.target.value)}
+                />
+              </FormField>
+            </div>
+            <FormField label="Type">
+              <select
+                className={selectCls}
+                value={form.type ?? "news"}
+                onChange={(e) => set("type", e.target.value)}
+              >
+                <option value="news">News</option>
+                <option value="event">Event</option>
+                <option value="notices">Notices</option>
+              </select>
+            </FormField>
+          </div>
 
           {/* Content */}
           <FormField label="Content">
@@ -195,7 +213,7 @@ function BannerModal({
 
               {/* Preview */}
               {savedBanner.image_url && (
-                <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden border border-zinc-700 mb-2">
+                <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-zinc-700 mb-2">
                   <img
                     src={savedBanner.image_url}
                     alt={savedBanner.title}
@@ -398,6 +416,15 @@ export default function NewsBannersPage() {
       label: "Title",
       render: (b: NewsBanner) => (
         <p className="font-semibold text-white">{b.title}</p>
+      ),
+    },
+    {
+      key: "type",
+      label: "Type",
+      render: (b: NewsBanner) => (
+        <span className="px-2 py-0.5 rounded-full bg-zinc-800 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+          {b.type || "news"}
+        </span>
       ),
     },
     {

@@ -24,71 +24,35 @@ import type {
 } from "@/lib/types";
 import Toast from "@/components/admin/Toast";
 import { FormField, inputCls } from "@/components/admin/FormField";
-import Image from "next/image";
 
 const STAGE_DEFS = [
   {
     stage_number: 1,
-    level_from: 1,
+    level_from: 20,
     level_to: 20,
-    is_breakthrough: false,
-    label: "1 → 20",
+    is_breakthrough: true,
+    label: "Phase 1 Breakthrough (20 → 20+)",
   },
   {
     stage_number: 2,
-    level_from: 20,
-    level_to: 20,
+    level_from: 40,
+    level_to: 40,
     is_breakthrough: true,
-    label: "20 → 20+",
+    label: "Phase 2 Breakthrough (40 → 40+)",
   },
   {
     stage_number: 3,
-    level_from: 20,
-    level_to: 40,
-    is_breakthrough: false,
-    label: "20+ → 40",
+    level_from: 60,
+    level_to: 60,
+    is_breakthrough: true,
+    label: "Phase 3 Breakthrough (60 → 60+)",
   },
   {
     stage_number: 4,
-    level_from: 40,
-    level_to: 40,
-    is_breakthrough: true,
-    label: "40 → 40+",
-  },
-  {
-    stage_number: 5,
-    level_from: 40,
-    level_to: 60,
-    is_breakthrough: false,
-    label: "40+ → 60",
-  },
-  {
-    stage_number: 6,
-    level_from: 60,
-    level_to: 60,
-    is_breakthrough: true,
-    label: "60 → 60+",
-  },
-  {
-    stage_number: 7,
-    level_from: 60,
-    level_to: 80,
-    is_breakthrough: false,
-    label: "60+ → 80",
-  },
-  {
-    stage_number: 8,
     level_from: 80,
     level_to: 80,
     is_breakthrough: true,
-    label: "80 → 80+",
-  },
-  {
-    stage_number: 9,
-    level_from: 80,
-    level_to: 90,
-    is_breakthrough: false,
-    label: "80+ → 90",
+    label: "Phase 4 Breakthrough (80 → 80+)",
   },
 ];
 
@@ -176,7 +140,7 @@ function AddRequirementModal({
         </div>
 
         {/* Item list */}
-        <div className="flex flex-col gap-1 max-h-52 overflow-y-auto pr-1">
+        <div className="flex flex-col gap-1 max-h-52 overflow-y-auto pr-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {filtered.length === 0 ? (
             <p className="text-xs text-zinc-600 font-mono text-center py-4">
               No items found
@@ -194,7 +158,7 @@ function AddRequirementModal({
                   }`}
               >
                 {item.image ? (
-                  <Image
+                  <img
                     width={64}
                     height={64}
                     src={item.image}
@@ -296,7 +260,11 @@ function StageRow({
         is_breakthrough: stageDef.is_breakthrough,
         credit_cost: 0,
       });
-      onStageCreated(res.data);
+      const full: AscensionStageWithRequirements = {
+        ...res.data,
+        requirements: [],
+      };
+      onStageCreated(full);
       showToast("Stage created", "success");
     } catch {
       showToast("Failed to create stage", "error");
@@ -451,7 +419,7 @@ function StageRow({
                         className="flex items-center gap-3 px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800"
                       >
                         {req.item_image ? (
-                          <Image
+                          <img
                             width={64}
                             height={64}
                             src={req.item_image}
@@ -616,7 +584,7 @@ export default function WeaponStagesPage() {
               />
             </div>
           </div>
-          <div className="overflow-y-auto max-h-[calc(100vh-220px)]">
+          <div className="overflow-y-auto max-h-[calc(100vh-220px)] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {filtered.map((w) => (
               <button
                 key={w.id}
@@ -625,7 +593,7 @@ export default function WeaponStagesPage() {
                   ${selectedWeapon?.id === w.id ? "bg-yellow-300/10 text-yellow-300" : "text-zinc-400 hover:text-white hover:bg-zinc-800/60"}`}
               >
                 {w.icon ? (
-                  <Image
+                  <img
                     width={64}
                     height={64}
                     src={w.icon}

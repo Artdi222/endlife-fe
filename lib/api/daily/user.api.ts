@@ -20,4 +20,22 @@ export const usersApi = {
 
   delete: (id: number) =>
     request<null>(`/users/${id}`, { method: "DELETE" }),
+
+  uploadProfileImage: (id: number, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return request<User>(`/users/${id}/profile-image`, {
+      method: "POST",
+      body: formData,
+    });
+  },
+
+  uploadProfileBanner: (id: number, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return request<User>(`/users/${id}/profile-banner`, {
+      method: "POST",
+      body: formData,
+    });
+  },
 };

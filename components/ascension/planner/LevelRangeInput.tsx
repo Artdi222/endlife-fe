@@ -1,128 +1,116 @@
 "use client";
-import { STAGE_POINT_OPTIONS, MAX_LEVEL } from "./constants";
-import { ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MAX_LEVEL, levelToPhase, PHASE_LABELS } from "./constants";
+import { ArrowRight } from "lucide-react";
 
 interface LevelRangeInputProps {
   currentLevel: number;
   targetLevel: number;
-  currentStage: number;
-  targetStage: number;
   onCurrentLevelChange: (v: number) => void;
   onTargetLevelChange: (v: number) => void;
-  onCurrentStageChange: (v: number) => void;
-  onTargetStageChange: (v: number) => void;
   disabled?: boolean;
 }
 
 const numCls =
   "w-14 bg-zinc-50 border border-zinc-200 rounded-lg px-2 py-1 text-sm font-mono text-zinc-800 text-center outline-none focus:border-yellow-400 transition-colors disabled:opacity-50 cursor-pointer [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
-const selectCls =
-  "bg-zinc-50 border border-zinc-200 rounded-lg pl-2 pr-7 py-1 text-sm font-mono text-zinc-800 outline-none focus:border-yellow-400 transition-colors disabled:opacity-50 cursor-pointer appearance-none w-[72px]";
-
 export default function LevelRangeInput({
   currentLevel,
   targetLevel,
-  currentStage,
-  targetStage,
   onCurrentLevelChange,
   onTargetLevelChange,
-  onCurrentStageChange,
-  onTargetStageChange,
   disabled = false,
 }: LevelRangeInputProps) {
+  const [localCurrent, setLocalCurrent] = useState(currentLevel);
+  const [localTarget, setLocalTarget] = useState(targetLevel);
+
+  useEffect(() => {
+    setLocalCurrent(currentLevel);
+  }, [currentLevel]);
+
+  useEffect(() => {
+    setLocalTarget(targetLevel);
+  }, [targetLevel]);
+
+  const handleCurrentBlur = () => {
+    let v = Math.min(MAX_LEVEL, Math.max(1, localCurrent));
+    setLocalCurrent(v);
+    if (v !== currentLevel) onCurrentLevelChange(v);
+  };
+
+  const handleTargetBlur = () => {
+    let v = Math.min(MAX_LEVEL, Math.max(localCurrent, localTarget));
+    setLocalTarget(v);
+    if (v !== targetLevel) onTargetLevelChange(v);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, field: "current" | "target") => {
+    if (e.key === "Enter") {
+      e.currentTarget.blur();
+    }
+  };
+
+  const currentPhase = levelToPhase(localCurrent);
+  const targetPhase = levelToPhase(localTarget);
+  const phaseChanged = targetPhase > currentPhase;
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1.5">
       {/* Level row */}
-      <div className="flex items-center gap-2">
-        <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 w-12 shrink-0">
+      <div className="flex items-center gap-2 border-b border-transparent pb-0.5">
+        <span
+          title="Character Experience Level (1-90)"
+          className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 w-14 shrink-0 cursor-help hover:text-zinc-600 transition-colors"
+        >
           Level
         </span>
         <input
           type="number"
           min={1}
           max={MAX_LEVEL}
-          value={currentLevel}
+          value={localCurrent}
           disabled={disabled}
-          onChange={(e) =>
-            onCurrentLevelChange(
-              Math.min(MAX_LEVEL, Math.max(1, Number(e.target.value))),
-            )
-          }
+          onChange={(e) => setLocalCurrent(Number(e.target.value))}
+          onBlur={handleCurrentBlur}
+          onKeyDown={(e) => handleKeyDown(e, "current")}
           className={numCls}
         />
-        <span className="text-zinc-800 font-mono text-xs">→</span>
+        <span className="text-zinc-800 font-mono text-[10px] shrink-0">→</span>
         <input
           type="number"
-          min={currentLevel}
+          min={localCurrent}
           max={MAX_LEVEL}
-          value={targetLevel}
+          value={localTarget}
           disabled={disabled}
-          onChange={(e) =>
-            onTargetLevelChange(
-              Math.min(
-                MAX_LEVEL,
-                Math.max(currentLevel, Number(e.target.value)),
-              ),
-            )
-          }
+          onChange={(e) => setLocalTarget(Number(e.target.value))}
+          onBlur={handleTargetBlur}
+          onKeyDown={(e) => handleKeyDown(e, "target")}
           className={numCls}
         />
       </div>
 
-      {/* Stage row */}
+      {/* Auto-computed phase badge */}
       <div className="flex items-center gap-2">
-        <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 w-12 shrink-0">
-          Stage
-        </span>
-
-        {/* Current stage — all options */}
-        <div className="relative flex items-center">
-          <select
-            value={currentStage}
-            disabled={disabled}
-            onChange={(e) => {
-              const next = Number(e.target.value);
-              onCurrentStageChange(next);
-              // If target is now behind current, bump it forward
-              if (targetStage < next) onTargetStageChange(next);
-            }}
-            className={selectCls}
-          >
-            {STAGE_POINT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            size={14}
-            className="absolute right-2 text-zinc-400 pointer-events-none"
-          />
-        </div>
-
-        <span className="text-zinc-800 font-mono text-xs">→</span>
-
-        {/* Target stage — only options >= currentStage */}
-        <div className="relative flex items-center">
-          <select
-            value={targetStage}
-            disabled={disabled}
-            onChange={(e) => onTargetStageChange(Number(e.target.value))}
-            className={selectCls}
-          >
-            {STAGE_POINT_OPTIONS.filter((o) => o.value >= currentStage).map(
-              (o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ),
+        <div className="w-14 shrink-0" />
+        <div className="flex items-center gap-2 -mt-1">
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-zinc-50 border border-zinc-100">
+            <span className="text-[10px] font-mono text-zinc-400">
+              {PHASE_LABELS[currentPhase]}
+            </span>
+            {phaseChanged && (
+              <>
+                <ArrowRight size={8} className="text-yellow-400" />
+                <span className="text-[10px] font-mono text-yellow-600 font-semibold">
+                  {PHASE_LABELS[targetPhase]}
+                </span>
+              </>
             )}
-          </select>
-          <ChevronDown
-            size={14}
-            className="absolute right-2 text-zinc-400 pointer-events-none"
-          />
+          </div>
+          {phaseChanged && (
+            <span className="text-[9px] font-mono text-zinc-300 uppercase tracking-wider">
+              +{targetPhase - currentPhase} asc{targetPhase - currentPhase > 1 ? "s" : ""}
+            </span>
+          )}
         </div>
       </div>
     </div>

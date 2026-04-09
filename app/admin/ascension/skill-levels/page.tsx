@@ -111,7 +111,7 @@ function AddRequirementModal({
         </div>
 
         {/* Item list */}
-        <div className="flex flex-col gap-1 max-h-52 overflow-y-auto pr-1">
+        <div className="flex flex-col gap-1 max-h-52 overflow-y-auto pr-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {filtered.length === 0 ? (
             <p className="text-xs text-zinc-600 font-mono text-center py-4">
               No items found
@@ -538,7 +538,7 @@ export default function SkillLevelsPage() {
               />
             </div>
           </div>
-          <div className="overflow-y-auto max-h-72">
+          <div className="overflow-y-auto max-h-72 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {filteredChars.map((c) => (
               <button
                 key={c.id}
@@ -572,7 +572,7 @@ export default function SkillLevelsPage() {
               Skill
             </p>
           </div>
-          <div className="overflow-y-auto max-h-[calc(100vh-220px)]">
+          <div className="overflow-y-auto max-h-[calc(100vh-220px)] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {!selectedChar ? (
               <p className="text-xs text-zinc-600 font-mono px-3 py-3">
                 Select a character first

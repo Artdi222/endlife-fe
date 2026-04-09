@@ -15,6 +15,8 @@ export interface AuthUser {
   username: string;
   email: string; // was missing from old type
   role: "user" | "admin";
+  profile_image?: string | null;
+  profile_banner?: string | null;
 }
 
 export interface AuthResponse {

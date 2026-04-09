@@ -29,66 +29,31 @@ import Image from "next/image";
 const STAGE_DEFS = [
   {
     stage_number: 1,
-    level_from: 1,
+    level_from: 20,
     level_to: 20,
-    is_breakthrough: false,
-    label: "1 → 20",
+    is_breakthrough: true,
+    label: "Phase 1 Breakthrough (20 → 20+)",
   },
   {
     stage_number: 2,
-    level_from: 20,
-    level_to: 20,
+    level_from: 40,
+    level_to: 40,
     is_breakthrough: true,
-    label: "20 → 20+",
+    label: "Phase 2 Breakthrough (40 → 40+)",
   },
   {
     stage_number: 3,
-    level_from: 20,
-    level_to: 40,
-    is_breakthrough: false,
-    label: "20+ → 40",
+    level_from: 60,
+    level_to: 60,
+    is_breakthrough: true,
+    label: "Phase 3 Breakthrough (60 → 60+)",
   },
   {
     stage_number: 4,
-    level_from: 40,
-    level_to: 40,
-    is_breakthrough: true,
-    label: "40 → 40+",
-  },
-  {
-    stage_number: 5,
-    level_from: 40,
-    level_to: 60,
-    is_breakthrough: false,
-    label: "40+ → 60",
-  },
-  {
-    stage_number: 6,
-    level_from: 60,
-    level_to: 60,
-    is_breakthrough: true,
-    label: "60 → 60+",
-  },
-  {
-    stage_number: 7,
-    level_from: 60,
-    level_to: 80,
-    is_breakthrough: false,
-    label: "60+ → 80",
-  },
-  {
-    stage_number: 8,
     level_from: 80,
     level_to: 80,
     is_breakthrough: true,
-    label: "80 → 80+",
-  },
-  {
-    stage_number: 9,
-    level_from: 80,
-    level_to: 90,
-    is_breakthrough: false,
-    label: "80+ → 90",
+    label: "Phase 4 Breakthrough (80 → 80+)",
   },
 ];
 
@@ -176,7 +141,7 @@ function AddRequirementModal({
         </div>
 
         {/* Item list */}
-        <div className="flex flex-col gap-1 max-h-52 overflow-y-auto pr-1">
+        <div className="flex flex-col gap-1 max-h-52 overflow-y-auto pr-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {filtered.length === 0 ? (
             <p className="text-xs text-zinc-600 font-mono text-center py-4">
               No items found
@@ -624,7 +589,7 @@ useEffect(() => {
               />
             </div>
           </div>
-          <div className="overflow-y-auto max-h-[calc(100vh-220px)]">
+          <div className="overflow-y-auto max-h-[calc(100vh-220px)] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {filtered.map((c) => (
               <button
                 key={c.id}

@@ -101,7 +101,7 @@ export default function Sidebar() {
         </Link>
       </div>
 
-      <nav className="flex-1 flex flex-col gap-1 p-3 overflow-y-auto">
+      <nav className="flex-1 flex flex-col gap-1 p-3 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         {navGroups.map((group) => {
           const isOpen = open[group.label] ?? false;
           const hasActive = group.items.some((i) => pathname === i.href);

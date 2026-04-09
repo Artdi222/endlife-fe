@@ -77,7 +77,7 @@ export default function NewsDetailPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden border border-zinc-200 mb-8"
+          className="relative w-full aspect-video rounded-2xl overflow-hidden border border-zinc-200 mb-8"
         >
           <img
             src={banner.image_url}
@@ -85,7 +85,7 @@ export default function NewsDetailPage() {
             className="absolute inset-0 w-full h-full object-cover"
           />
           {/* Gradient overlay at bottom */}
-          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-black/40 to-transparent" />
         </motion.div>
       )}
 

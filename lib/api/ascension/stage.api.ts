@@ -5,7 +5,7 @@ import type {
   UpdateAscensionStageDTO,
 } from "../../types";
 
-const BASE = "/ascension/stages";
+const BASE = "/stages";
 
 export const stageApi = {
   getForEntity: (entityType: "character" | "weapon", entityId: number) =>

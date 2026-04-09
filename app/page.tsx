@@ -162,7 +162,6 @@ export default function LandingPage() {
           <FeaturesSection />
         </motion.div>
 
-        {/* Operators */}
         <div id="operators">
           <motion.div
             initial={{ opacity: 0 }}
@@ -170,7 +169,7 @@ export default function LandingPage() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.5 }}
           >
-            <OperatorSection />
+            <OperatorSection limit={4} />
           </motion.div>
         </div>
 

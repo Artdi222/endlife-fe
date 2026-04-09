@@ -155,17 +155,9 @@ export default function CharacterCard({
         <LevelRangeInput
           currentLevel={character.current_level}
           targetLevel={character.target_level}
-          currentStage={character.current_ascension_stage}
-          targetStage={character.target_ascension_stage}
           disabled={saving}
           onCurrentLevelChange={(v) => handleChange({ current_level: v })}
           onTargetLevelChange={(v) => handleChange({ target_level: v })}
-          onCurrentStageChange={(v) =>
-            handleChange({ current_ascension_stage: v })
-          }
-          onTargetStageChange={(v) =>
-            handleChange({ target_ascension_stage: v })
-          }
         />
 
         {/* Skills */}

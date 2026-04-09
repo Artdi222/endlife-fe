@@ -17,7 +17,8 @@ import { userPlannerApi } from "@/lib/api/ascension/userPlanner.api";
 import type { GlobalProgressResult, NewsBanner } from "@/lib/types";
 import type { PlannerSummary } from "@/lib/types/ascension/userPlanner.types";
 import { getUserId, getTodayDate } from "@/lib/utils/auth.utils";
-
+import OperatorSection from "@/components/operator/operatorSection";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 // ── News Banner Carousel ────────────────────────────────────
 function NewsBannerCarousel({ banners }: { banners: NewsBanner[] }) {
@@ -109,9 +110,7 @@ function NewsBannerCarousel({ banners }: { banners: NewsBanner[] }) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 + i * 0.06 }}
-              whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="relative w-72 lg:w-80 aspect-[16/9] rounded-xl overflow-hidden cursor-pointer group"
-              style={{ border: "1px solid #E8E8E4" }}
+              className="relative w-80 lg:w-[420px] aspect-video rounded-2xl overflow-hidden cursor-pointer group shadow-sm border border-zinc-200 bg-white"
             >
               {banner.image_url ? (
                 <img
@@ -120,14 +119,13 @@ function NewsBannerCarousel({ banners }: { banners: NewsBanner[] }) {
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center">
+                <div className="absolute inset-0 bg-linear-to-br from-zinc-100 to-zinc-200 flex items-center justify-center">
                   <Newspaper size={32} className="text-zinc-300" />
                 </div>
               )}
 
-              {/* Bottom gradient + title */}
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-4 pt-8">
-                <p className="text-white text-sm font-bold leading-snug line-clamp-2">
+              <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-5 pt-12">
+                <p className="text-white text-base lg:text-lg font-bold leading-snug line-clamp-2 group-hover:text-[#EBBF00] transition-colors">
                   {banner.title}
                 </p>
                 <span
@@ -170,23 +168,21 @@ function DailyProgressCard({
   const pct = Math.round(data.progress * 100);
 
   return (
-    <Link href="/dashboard/daily" className="block group">
+    <Link href="/dashboard/daily" className="block group h-full">
       <motion.div
-
         initial="hidden"
         animate="visible"
-        whileHover={{ y: -2 }}
-        className="relative overflow-hidden rounded-xl p-5"
-        style={{
-          backgroundColor: "#FAFAF8",
-          border: "1px solid #E8E8E4",
-        }}
+        className="relative overflow-hidden rounded-2xl p-6 bg-white border border-zinc-200 shadow-sm transition-all duration-300 hover:shadow-lg flex flex-col h-full"
       >
+        <div className="absolute top-0 right-2 opacity-[0.03] pointer-events-none transition-transform group-hover:scale-105 duration-700">
+          <CalendarCheck size={120} />
+        </div>
+
         {/* Top accent */}
         <div
-          className="absolute top-0 left-0 right-0 h-px"
+          className="absolute top-0 left-0 right-0 h-1"
           style={{
-            background: "linear-gradient(to right, #EBBF00 30%, transparent)",
+            background: "linear-linear(to right, #EBBF00 30%, transparent)",
           }}
         />
 
@@ -195,7 +191,7 @@ function DailyProgressCard({
           className="absolute inset-0 pointer-events-none opacity-30"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(0,0,0,0.012) 8px, rgba(0,0,0,0.012) 9px)",
+              "repeating-linear-linear(-45deg, transparent, transparent 8px, rgba(0,0,0,0.012) 8px, rgba(0,0,0,0.012) 9px)",
           }}
         />
 
@@ -216,45 +212,47 @@ function DailyProgressCard({
             </span>
           </div>
 
-          <div className="flex items-end justify-between mb-3">
-            <div>
-              <span className="text-3xl font-black text-zinc-900 tracking-tight">
-                {pct}
-                <span className="text-lg text-zinc-400 font-normal">%</span>
+          <div className="mt-auto pt-6">
+            <div className="flex items-end justify-between mb-3">
+              <div>
+                <span className="text-4xl font-black text-zinc-900 tracking-tight">
+                  {pct}
+                  <span className="text-xl text-zinc-400 font-normal">%</span>
+                </span>
+              </div>
+              <span
+                className="text-zinc-400"
+                style={{
+                  fontFamily: "monospace",
+                  fontSize: "11px",
+                  letterSpacing: "0.1em",
+                }}
+              >
+                {data.completed_categories}/{data.total_categories} categories
               </span>
             </div>
-            <span
-              className="text-zinc-400"
-              style={{
-                fontFamily: "monospace",
-                fontSize: "10px",
-                letterSpacing: "0.1em",
-              }}
-            >
-              {data.completed_categories}/{data.total_categories} categories
-            </span>
-          </div>
 
-          {/* Progress bar */}
-          <div className="relative h-2 bg-zinc-200/60 rounded-full overflow-hidden">
-            <motion.div
-              className="absolute left-0 top-0 h-full rounded-full"
-              style={{ backgroundColor: "#EBBF00" }}
-              initial={{ width: 0 }}
-              animate={{ width: `${pct}%` }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-            />
-          </div>
-
-          {/* Hover arrow */}
-          <div className="flex items-center justify-end mt-3">
-            <span className="text-xs text-zinc-400 group-hover:text-zinc-700 transition-colors flex items-center gap-1">
-              View checklist
-              <ChevronRight
-                size={12}
-                className="group-hover:translate-x-0.5 transition-transform"
+            {/* Progress bar */}
+            <div className="relative h-2.5 bg-zinc-100 rounded-full overflow-hidden shadow-inner">
+              <motion.div
+                className="absolute left-0 top-0 h-full rounded-full"
+                style={{ backgroundColor: "#EBBF00" }}
+                initial={{ width: 0 }}
+                animate={{ width: `${pct}%` }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
               />
-            </span>
+            </div>
+
+            {/* Hover arrow */}
+            <div className="flex items-center justify-end mt-4">
+              <span className="text-xs font-bold uppercase tracking-widest text-zinc-400 group-hover:text-[#EBBF00] transition-colors flex items-center gap-1">
+                View checklist
+                <ChevronRight
+                  size={14}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
+              </span>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -281,24 +279,22 @@ function PlannerSummaryCard({
   const matPct = totalMats === 0 ? 0 : Math.round((completedMats / totalMats) * 100);
 
   return (
-    <Link href="/dashboard/planner" className="block group">
+    <Link href="/dashboard/planner" className="block group h-full">
       <motion.div
-
         initial="hidden"
         animate="visible"
-        whileHover={{ y: -2 }}
-        className="relative overflow-hidden rounded-xl p-5"
-        style={{
-          backgroundColor: "#FAFAF8",
-          border: "1px solid #E8E8E4",
-        }}
+        className="relative overflow-hidden rounded-2xl p-6 bg-white border border-zinc-200 shadow-sm transition-all duration-300 hover:shadow-lg flex flex-col h-full"
       >
+        <div className="absolute top-0 right-2 opacity-[0.03] pointer-events-none transition-transform group-hover:scale-105 duration-700">
+          <TrendingUp size={120} />
+        </div>
+
         {/* Top accent */}
         <div
-          className="absolute top-0 left-0 right-0 h-px"
+          className="absolute top-0 left-0 right-0 h-1"
           style={{
             background:
-              "linear-gradient(to right, transparent, #EBBF00 70%, transparent)",
+              "linear-linear(to right, transparent, #EBBF00 70%, transparent)",
           }}
         />
 
@@ -307,7 +303,7 @@ function PlannerSummaryCard({
           className="absolute inset-0 pointer-events-none opacity-20"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)",
+              "linear-linear(rgba(0,0,0,0.03) 1px, transparent 1px), linear-linear(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
@@ -329,73 +325,58 @@ function PlannerSummaryCard({
             </span>
           </div>
 
-          <div className="flex items-end justify-between mb-3">
-            <div className="flex items-baseline gap-4">
-              <div>
-                <span className="text-3xl font-black text-zinc-900 tracking-tight">
-                  {charsCount}
-                </span>
-                <span
-                  className="text-zinc-400 ml-1"
-                  style={{
-                    fontFamily: "monospace",
-                    fontSize: "9px",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Ops
-                </span>
+          <div className="mt-auto pt-6">
+            <div className="flex items-end justify-between mb-3">
+              <div className="flex items-baseline gap-5">
+                <div>
+                  <span className="text-4xl font-black text-zinc-900 tracking-tight">
+                    {charsCount}
+                  </span>
+                  <span
+                    className="text-zinc-400 ml-1 font-mono text-[10px] tracking-widest uppercase"
+                  >
+                    Ops
+                  </span>
+                </div>
+                <div>
+                  <span className="text-4xl font-black text-zinc-900 tracking-tight">
+                    {weapsCount}
+                  </span>
+                  <span
+                    className="text-zinc-400 ml-1 font-mono text-[10px] tracking-widest uppercase"
+                  >
+                    Wpns
+                  </span>
+                </div>
               </div>
-              <div>
-                <span className="text-3xl font-black text-zinc-900 tracking-tight">
-                  {weapsCount}
-                </span>
-                <span
-                  className="text-zinc-400 ml-1"
-                  style={{
-                    fontFamily: "monospace",
-                    fontSize: "9px",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Wpns
-                </span>
-              </div>
+              <span
+                className="text-zinc-400 font-mono text-[11px] tracking-widest"
+              >
+                {completedMats}/{totalMats} materials
+              </span>
             </div>
-            <span
-              className="text-zinc-400"
-              style={{
-                fontFamily: "monospace",
-                fontSize: "10px",
-                letterSpacing: "0.1em",
-              }}
-            >
-              {completedMats}/{totalMats} materials
-            </span>
-          </div>
 
-          {/* Materials progress bar */}
-          <div className="relative h-2 bg-zinc-200/60 rounded-full overflow-hidden">
-            <motion.div
-              className="absolute left-0 top-0 h-full rounded-full"
-              style={{ backgroundColor: "#EBBF00" }}
-              initial={{ width: 0 }}
-              animate={{ width: `${matPct}%` }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
-            />
-          </div>
-
-          {/* Hover arrow */}
-          <div className="flex items-center justify-end mt-3">
-            <span className="text-xs text-zinc-400 group-hover:text-zinc-700 transition-colors flex items-center gap-1">
-              View planner
-              <ChevronRight
-                size={12}
-                className="group-hover:translate-x-0.5 transition-transform"
+            {/* Materials progress bar */}
+            <div className="relative h-2.5 bg-zinc-100 rounded-full overflow-hidden shadow-inner">
+              <motion.div
+                className="absolute left-0 top-0 h-full rounded-full"
+                style={{ backgroundColor: "#EBBF00" }}
+                initial={{ width: 0 }}
+                animate={{ width: `${matPct}%` }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
               />
-            </span>
+            </div>
+
+            {/* Hover arrow */}
+            <div className="flex items-center justify-end mt-4">
+              <span className="text-xs font-bold uppercase tracking-widest text-zinc-400 group-hover:text-[#EBBF00] transition-colors flex items-center gap-1">
+                View planner
+                <ChevronRight
+                  size={14}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
+              </span>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -411,6 +392,7 @@ function QuickLinkCard({
   title,
   description,
   index,
+  image,
 }: {
   href: string;
   icon: React.ElementType;
@@ -418,57 +400,56 @@ function QuickLinkCard({
   title: string;
   description: string;
   index: number;
+  image?: string;
 }) {
   return (
-    <Link href={href} className="block group">
+    <Link href={href} className="block group h-full">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 + index * 0.08 }}
-        whileHover={{ y: -3, transition: { duration: 0.2 } }}
-        className="relative overflow-hidden p-6 flex flex-col h-full"
-        style={{
-          backgroundColor: "#FAFAF8",
-          border: "1px solid #E8E8E4",
-        }}
+        className="relative overflow-hidden flex flex-col h-full rounded-2xl border border-zinc-200 bg-white shadow-sm hover:shadow-xl transition-all duration-300 group"
       >
-        {/* Left accent stripe */}
-        <div
-          className="absolute left-0 top-0 bottom-0 w-[2px]"
-          style={{
-            background: "linear-gradient(to bottom, #EBBF00, transparent)",
-          }}
-        />
-
-        <div className="flex items-center gap-2 mb-4">
-          <Icon size={14} style={{ color: "#EBBF00" }} />
-          <span
-            style={{
-              fontFamily: "monospace",
-              fontSize: "9px",
-              fontWeight: 700,
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "#BBB",
-            }}
-          >
-            {tag}
-          </span>
+        {/* Image Display */}
+        <div className="relative aspect-video w-full overflow-hidden bg-zinc-100">
+          <img
+            src={image}
+            alt={title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          {/* linear overlay */}
+          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+          
+          {/* Card Icon & Tag */}
+          <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3">
+            <div className="p-2.5 bg-[#EBBF00] shadow-lg rounded-lg">
+              <Icon size={16} className="text-zinc-900" />
+            </div>
+            <span
+              className="text-white text-xs font-bold tracking-[0.2em] uppercase drop-shadow-md"
+              style={{ fontFamily: 'monospace' }}
+            >
+              {tag}
+            </span>
+          </div>
         </div>
 
-        <h3 className="text-base font-bold text-zinc-900 mb-1 tracking-tight">
-          {title}
-        </h3>
-        <p className="text-xs text-zinc-500 leading-relaxed flex-1">
-          {description}
-        </p>
+        {/* Content Details */}
+        <div className="p-6 flex-1 flex flex-col">
+          <h3 className="text-xl font-black text-zinc-900 mb-2 tracking-tight group-hover:text-yellow-600 transition-colors">
+            {title}
+          </h3>
+          <p className="text-sm text-zinc-500 leading-relaxed flex-1">
+            {description}
+          </p>
 
-        <div className="flex items-center gap-1 mt-4 text-xs text-zinc-400 group-hover:text-yellow-600 transition-colors">
-          <span>Open</span>
-          <ChevronRight
-            size={12}
-            className="group-hover:translate-x-0.5 transition-transform"
-          />
+          <div className="flex items-center gap-1 mt-6 text-xs font-extrabold text-zinc-400 group-hover:text-[#EBBF00] transition-colors uppercase tracking-widest">
+            <span>Explore</span>
+            <ChevronRight
+              size={14}
+              className="group-hover:translate-x-1 transition-transform"
+            />
+          </div>
         </div>
       </motion.div>
     </Link>
@@ -477,6 +458,7 @@ function QuickLinkCard({
 
 // ── Main Home Page ──────────────────────────────────────────
 export default function HomePage() {
+  const { user } = useAuth();
   const [newsBanners, setNewsBanners] = useState<NewsBanner[]>([]);
   const [dailyProgress, setDailyProgress] =
     useState<GlobalProgressResult | null>(null);
@@ -544,91 +526,116 @@ export default function HomePage() {
   }
 
   return (
-    <div className="relative w-full min-h-[calc(100vh-80px)] p-10">
-      {/* Technical grid background */}
-      <div
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-          zIndex: 0,
-        }}
-      />
-
-      <div className="relative z-10 max-w-5xl mx-auto">
+    <div className="relative w-full min-h-[calc(100vh-80px)] pt-10 ">
+      <div className="relative z-10 w-full max-w-[1600px] mx-auto">
         {/* ── Header ── */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-10"
+          className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
-          <div className="flex items-center gap-2 mb-3">
-            <Zap size={10} style={{ color: "#EBBF00" }} />
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Zap size={12} style={{ color: "#EBBF00" }} />
+              <span
+                style={{
+                  fontFamily: "monospace",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "#888",
+                }}
+              >
+                {today} — System Online
+              </span>
+            </div>
+            <h1
+              className="font-black tracking-tight leading-none"
+              style={{ fontSize: "clamp(32px, 5vw, 48px)", color: "#111" }}
+            >
+              Welcome back,{" "}
+              <span style={{ color: "#EBBF00" }}>{user?.username || "Endmin"}</span>
+            </h1>
+            <p className="text-zinc-500 text-sm mt-3 max-w-xl" style={{ fontFamily: "monospace" }}>
+              All systems nominal. Daily operations overview and field intelligence synchronized.
+            </p>
+          </div>
+
+          <div className="hidden md:flex gap-8 items-center text-right">
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] text-zinc-400 font-mono tracking-widest uppercase mb-1">Network</span>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-sm font-bold text-zinc-800">CONNECTED</span>
+              </div>
+            </div>
+            <div className="w-px h-10 bg-zinc-200" />
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] text-zinc-400 font-mono tracking-widest uppercase mb-1">Version</span>
+              <span className="text-sm font-bold text-zinc-800">ENDFIELD [v0.1]</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Divider */}
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{
+            duration: 0.8,
+            ease: [0.22, 1, 0.36, 1],
+            delay: 0.2,
+          }}
+          className="mb-12"
+          style={{
+            transformOrigin: "left",
+            height: "1px",
+            backgroundColor: "#E8E8E4",
+            position: "relative",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              width: "120px",
+              height: "1px",
+              background: "linear-gradient(to right, #EBBF00, transparent)",
+            }}
+          />
+        </motion.div>
+
+        {/* ── Operations Section ── */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <TrendingUp size={14} style={{ color: "#EBBF00" }} />
             <span
               style={{
                 fontFamily: "monospace",
-                fontSize: "10px",
+                fontSize: "12px",
                 fontWeight: 700,
                 letterSpacing: "0.2em",
                 textTransform: "uppercase",
-                color: "#AAA",
+                color: "#111",
               }}
             >
-              {today}
+              Operational Overview
             </span>
+            <div className="flex-1 h-px bg-zinc-200" />
           </div>
-          <h1
-            className="font-black tracking-tight leading-none"
-            style={{ fontSize: "clamp(32px, 5vw, 48px)", color: "#111" }}
-          >
-            Welcome back,{" "}
-            <span style={{ color: "#EBBF00" }}>Endmin</span>
-          </h1>
-          <p className="text-zinc-400 text-sm mt-2 max-w-md" style={{ fontFamily: "monospace" }}>
-            Your daily operations overview and latest field intelligence.
-          </p>
-
-          {/* Divider */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{
-              duration: 0.8,
-              ease: [0.22, 1, 0.36, 1],
-              delay: 0.2,
-            }}
-            className="mt-6"
-            style={{
-              transformOrigin: "left",
-              height: "1px",
-              backgroundColor: "#E8E8E4",
-              position: "relative",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                left: 0,
-                top: 0,
-                width: "80px",
-                height: "1px",
-                background: "linear-gradient(to right, #EBBF00, transparent)",
-              }}
-            />
-          </motion.div>
-        </motion.div>
-
-        {/* ── News Banners ── */}
-        <div className="mb-10">
-          <NewsBannerCarousel banners={newsBanners} />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            <DailyProgressCard data={dailyProgress} />
+            <PlannerSummaryCard summary={plannerSummary} charsCount={charCount} weapsCount={weapCount} />
+          </div>
         </div>
 
-        {/* ── Stats Cards ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-          <DailyProgressCard data={dailyProgress} />
-          <PlannerSummaryCard summary={plannerSummary} charsCount={charCount} weapsCount={weapCount} />
+        {/* ── News / Intelligence Section ── */}
+        <div className="mb-12">
+          <NewsBannerCarousel banners={newsBanners} />
         </div>
 
         {/* ── Quick Links ── */}
@@ -649,10 +656,7 @@ export default function HomePage() {
             <div className="flex-1 h-px bg-zinc-200" />
           </div>
 
-          <div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px"
-            style={{ backgroundColor: "#E8E8E4" }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 href: "/dashboard/daily",
@@ -661,6 +665,7 @@ export default function HomePage() {
                 title: "Daily Checklist",
                 description:
                   "Track your daily and weekly missions. Stay on schedule with automated progress tracking.",
+                image: "/Dashboard/daily.webp"
               },
               {
                 href: "/dashboard/planner",
@@ -669,23 +674,48 @@ export default function HomePage() {
                 title: "Ascension Planner",
                 description:
                   "Map out material farming for operators and weapons. See exactly what you need.",
+                image: "/Dashboard/Ascension.webp"
               },
               {
                 href: "/dashboard/news/latest",
                 icon: Newspaper,
-                tag: "03 — Intel",
+                tag: "03 — News",
                 title: "News & Updates",
                 description:
                   "Stay informed with the latest game news, patch notes, and community updates.",
+                image: "/Dashboard/News.webp"
               },
             ].map((item, i) => (
-              <div
-                key={item.href}
-                style={{ backgroundColor: "#FAFAF8", display: "flex" }}
-              >
-                <QuickLinkCard {...item} index={i} />
-              </div>
+              <QuickLinkCard key={item.href} {...item} index={i} />
             ))}
+          </div>
+        </div>
+
+        {/* ── Operator Section ── */}
+        <div className="mb-10 block">
+          <div className="flex items-center gap-3 mb-4">
+            <span
+              style={{
+                fontFamily: "monospace",
+                fontSize: "10px",
+                fontWeight: 700,
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "#999",
+              }}
+            >
+              Operator Directory
+            </span>
+            <div className="flex-1 h-px bg-zinc-200" />
+            <Link href="/dashboard/characters" className="text-xs text-zinc-400 hover:text-zinc-800 transition-colors flex items-center font-bold tracking-wider uppercase">
+              View All <ChevronRight size={14} className="ml-0.5" />
+            </Link>
+          </div>
+          <div className="w-full rounded-2xl overflow-hidden border border-zinc-200 shadow-sm relative group">
+            {/* Limit OperatorSection container height to match its standard view without fully blowing up dashboard */}
+            <div className="w-full relative bg-zinc-50 rounded-2xl overflow-hidden">
+               <OperatorSection />
+            </div>
           </div>
         </div>
 

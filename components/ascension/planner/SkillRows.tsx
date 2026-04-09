@@ -1,10 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { UserCharacterSkillWithDetails } from "@/lib/types/ascension/userPlanner.types";
 import { SKILL_MAX_LEVEL } from "./constants";
-import Image from "next/image";
 
 interface SkillRowsProps {
   skills: UserCharacterSkillWithDetails[];
@@ -16,9 +15,9 @@ interface SkillRowsProps {
 }
 
 const SKILL_TYPE_LABEL: Record<string, string> = {
-  skill: "Skill",
+  skill: "Combat Skill",
   talent: "Talent",
-  spaceship_talent: "Ship",
+  spaceship_talent: "Ship Skill",
 };
 
 const SKILL_TYPE_COLOR: Record<string, string> = {
@@ -67,19 +66,19 @@ function SkillRow({
     "bg-zinc-50 border border-zinc-200 rounded-md pl-1.5 pr-5 py-0.5 text-xs font-mono text-zinc-800 outline-none focus:border-yellow-400 transition-colors cursor-pointer appearance-none text-center min-w-[36px]";
 
   return (
-    <div className="flex items-center gap-2 py-1.5 border-b border-zinc-50 last:border-0">
+    <div className="flex items-center gap-2 py-2 border-b border-zinc-50 last:border-0 group/row">
       {/* Icon */}
-      <div className="w-10 h-10 rounded flex items-center justify-center shrink-0 bg-black">
+      <div className="w-9 h-9 rounded flex items-center justify-center shrink-0 bg-zinc-950 border border-zinc-800 overflow-hidden relative">
         {skill.skill_icon ? (
-          <Image
-            width={128}
-            height={128}
+          <img
+            width={36}
+            height={36}
             src={skill.skill_icon}
             alt=""
-            className="w-8 h-8 object-cover rounded"
+            className="w-full h-full object-cover"
           />
         ) : (
-          <span className="text-l font-mono text-yellow-300">
+          <span className="text-[10px] font-mono text-yellow-300 font-bold">
             {SKILL_TYPE_LABEL[skill.skill_type]?.[0] ?? "S"}
           </span>
         )}
@@ -87,11 +86,11 @@ function SkillRow({
 
       {/* Name + type badge */}
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-semibold text-zinc-700 truncate">
+        <p className="text-[11px] font-bold text-zinc-700 truncate leading-tight">
           {skill.skill_name}
         </p>
         <span
-          className={`inline-block text-[9px] font-mono uppercase tracking-wide px-1 rounded border ${
+          className={`inline-block text-[8px] font-mono uppercase tracking-wider px-1 rounded border ${
             SKILL_TYPE_COLOR[skill.skill_type] ??
             "bg-zinc-50 text-zinc-400 border-zinc-100"
           }`}
@@ -100,9 +99,8 @@ function SkillRow({
         </span>
       </div>
 
-      {/* Level selects — show current max options for this skill type */}
-      <div className="flex items-center gap-1 shrink-0">
-        {/* Current level select */}
+      {/* Level selects */}
+      <div className="flex items-center gap-1.5 shrink-0 ml-2">
         <div className="relative flex items-center">
           <select
             value={current}
@@ -116,15 +114,13 @@ function SkillRow({
             ))}
           </select>
           <ChevronDown
-            size={12}
-            strokeWidth={3}
+            size={10}
             className="absolute right-1 text-zinc-400 pointer-events-none"
           />
         </div>
 
-        <span className="text-zinc-800 text-l">→</span>
+        <span className="text-zinc-300 font-mono text-[10px]">→</span>
 
-        {/* Target level select — only options >= current */}
         <div className="relative flex items-center">
           <select
             value={target}
@@ -140,18 +136,19 @@ function SkillRow({
               ))}
           </select>
           <ChevronDown
-            size={12}
-            strokeWidth={3}
+            size={10}
             className="absolute right-1 text-zinc-400 pointer-events-none"
           />
         </div>
 
-        {saving && (
-          <Loader2
-            size={11}
-            className="animate-spin text-yellow-500 shrink-0"
-          />
-        )}
+        <div className="w-3 flex items-center justify-center">
+          {saving && (
+            <Loader2
+              size={10}
+              className="animate-spin text-yellow-500 shrink-0"
+            />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -160,41 +157,62 @@ function SkillRow({
 export default function SkillRows({ skills, onUpdateSkill }: SkillRowsProps) {
   const [open, setOpen] = useState(true);
 
+  const grouped = useMemo(() => {
+    const types = ["skill", "talent", "spaceship_talent"];
+    return types
+      .map((type) => ({
+        type,
+        label: SKILL_TYPE_LABEL[type],
+        items: skills.filter((s) => s.skill_type === type),
+      }))
+      .filter((g) => g.items.length > 0);
+  }, [skills]);
+
   if (skills.length === 0) return null;
 
-  // Group by type for a cleaner display order: skills first, then talents, then ship
-  const ordered = [
-    ...skills.filter((s) => s.skill_type === "skill"),
-    ...skills.filter((s) => s.skill_type === "talent"),
-    ...skills.filter((s) => s.skill_type === "spaceship_talent"),
-  ];
-
   return (
-    <div className="mt-2">
+    <div className="mt-3">
       <button
         onClick={() => setOpen((p) => !p)}
-        className="w-full flex items-center justify-between py-1.5 text-[10px] font-mono uppercase tracking-widest text-zinc-400 hover:text-zinc-600 transition-colors"
+        className="w-full flex items-center justify-between py-2 text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-400 hover:text-zinc-600 transition-colors border-b border-zinc-100"
       >
-        <span>Skills ({skills.length})</span>
+        <div className="flex items-center gap-2">
+          <span>Skills Progress</span>
+          <span className="text-[10px] font-mono text-zinc-300">
+            ({skills.length})
+          </span>
+        </div>
         {open ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
       </button>
 
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {open && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="pt-1">
-              {ordered.map((s) => (
-                <SkillRow
-                  key={s.id}
-                  skill={s}
-                  onUpdate={(c, t) => onUpdateSkill(s.id, c, t)}
-                />
+            <div className="pt-2 space-y-4">
+              {grouped.map((group) => (
+                <div key={group.type}>
+                  <div className="flex items-center gap-2 mb-1 px-1">
+                    <span className="text-[9px] font-mono uppercase tracking-[0.1em] text-zinc-400">
+                      {group.label}s
+                    </span>
+                    <div className="flex-1 h-px bg-zinc-50" />
+                  </div>
+                  <div className="space-y-0.5">
+                    {group.items.map((s) => (
+                      <SkillRow
+                        key={s.id}
+                        skill={s}
+                        onUpdate={(c, t) => onUpdateSkill(s.id, c, t)}
+                      />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </motion.div>

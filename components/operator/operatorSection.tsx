@@ -7,7 +7,7 @@ import CharInfoPanel from "./charInfoPanel";
 import ToggleSwitch from "./toggleSwitch";
 import Image from "next/image";
 
-export default function OperatorSection() {
+export default function OperatorSection({ limit }: { limit?: number } = {}) {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [listOffset, setListOffset] = useState(0);
@@ -22,10 +22,10 @@ export default function OperatorSection() {
       .then((data) => {
         const chars: Character[] = data.data || [];
         chars.sort((a, b) => a.order_index - b.order_index);
-        setCharacters(chars.slice(0, 4));
+        setCharacters(limit ? chars.slice(0, limit) : chars);
       })
       .catch(() => {});
-  }, []);
+  }, [limit]);
 
   const selectedChar = characters[selectedIndex] ?? null;
   const imgError = imgErrorId === (selectedChar?.id ?? -1);

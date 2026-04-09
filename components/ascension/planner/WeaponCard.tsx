@@ -135,17 +135,9 @@ export default function WeaponCard({
         <LevelRangeInput
           currentLevel={weapon.current_level}
           targetLevel={weapon.target_level}
-          currentStage={weapon.current_ascension_stage}
-          targetStage={weapon.target_ascension_stage}
           disabled={saving}
           onCurrentLevelChange={(v) => handleChange({ current_level: v })}
           onTargetLevelChange={(v) => handleChange({ target_level: v })}
-          onCurrentStageChange={(v) =>
-            handleChange({ current_ascension_stage: v })
-          }
-          onTargetStageChange={(v) =>
-            handleChange({ target_ascension_stage: v })
-          }
         />
       </div>
     </motion.div>

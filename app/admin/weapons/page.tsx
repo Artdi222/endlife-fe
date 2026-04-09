@@ -15,7 +15,6 @@ import type { Weapon, CreateWeaponDTO, UpdateWeaponDTO } from "@/lib/types";
 import DataTable from "@/components/admin/DataTable";
 import Toast from "@/components/admin/Toast";
 import { FormField, inputCls, selectCls } from "@/components/admin/FormField";
-import Image from "next/image";
 
 // ── Constants ────────────────────────────────────────────────
 const WEAPON_TYPES = ["Sword", "Greatsword", "Gun", "Polearm", "Arts Unit"];
@@ -411,7 +410,7 @@ export default function WeaponsPage() {
       label: "Icon",
       render: (w: Weapon) =>
         w.icon ? (
-          <Image
+          <img
             width={64}
             height={64}
             src={w.icon}

@@ -84,6 +84,11 @@ export interface PlannerSummary {
   materials: SummaryMaterial[];
   total_credits_needed: string; // BIGINT as string
   total_exp_needed: string; // BIGINT as string
+  credits_breakdown: {
+    ascension: string; // BIGINT as string
+    skills: string;    // BIGINT as string
+    leveling: string;  // BIGINT as string
+  };
 }
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
@@ -99,8 +104,6 @@ export interface AddUserCharacterDTO {
 export interface UpdateUserCharacterDTO {
   current_level?: number;
   target_level?: number;
-  current_ascension_stage?: number;
-  target_ascension_stage?: number;
 }
 
 export interface AddUserWeaponDTO {
@@ -114,8 +117,6 @@ export interface AddUserWeaponDTO {
 export interface UpdateUserWeaponDTO {
   current_level?: number;
   target_level?: number;
-  current_ascension_stage?: number;
-  target_ascension_stage?: number;
 }
 
 export interface UpdateUserCharacterSkillDTO {

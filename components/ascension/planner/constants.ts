@@ -113,3 +113,36 @@ export const MATERIAL_CATEGORY_ORDER = [
   "Operator Gifts",
   "Currency",
 ];
+
+// ─── LEVEL → PHASE HELPERS ──────────────────────────────────────────────────
+
+/** Ascension phase thresholds — each level above threshold means that phase is cleared */
+const PHASE_THRESHOLDS = [0, 20, 40, 60, 80] as const;
+
+/** Human-readable phase labels */
+export const PHASE_LABELS = [
+  "Phase 0",
+  "Phase 1",
+  "Phase 2",
+  "Phase 3",
+  "Phase 4",
+] as const;
+
+/**
+ * Derive the highest ascension phase cleared for a given level.
+ * - Level 1–20  → Phase 0 (no ascension done)
+ * - Level 21–40 → Phase 1 (20+ breakthrough cleared)
+ * - Level 41–60 → Phase 2 (40+ breakthrough cleared)
+ * - Level 61–80 → Phase 3 (60+ breakthrough cleared)
+ * - Level 81–90 → Phase 4 (80+ breakthrough cleared)
+ */
+export function levelToPhase(level: number): number {
+  let phase = 0;
+  for (let i = PHASE_THRESHOLDS.length - 1; i >= 0; i--) {
+    if (level > PHASE_THRESHOLDS[i]) {
+      phase = i;
+      break;
+    }
+  }
+  return phase;
+}
